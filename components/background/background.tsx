@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface LeafConfig {
 	id: number;
@@ -15,8 +15,11 @@ interface LeafConfig {
 }
 
 export default function Background() {
-	// Move the initialization logic into a lazy initializer
-	const [leaves] = useState<LeafConfig[]>(() => {
+	// Start with no leaves on the server to avoid mismatched random values
+	const [leaves, setLeaves] = useState<LeafConfig[]>([]);
+
+	// Populate leaves only on the client after the component mounts
+	useEffect(() => {
 		const leafCount = 20;
 		const leafColors: string[] = [
 			"var(--color-teal, #0d9488)",
@@ -24,8 +27,7 @@ export default function Background() {
 			"var(--color-teal-dark, #134e4a)",
 			"rgba(13, 148, 136, 0.3)",
 		];
-
-		return Array.from({ length: leafCount }).map((_, i) => ({
+		const generated = Array.from({ length: leafCount }).map((_, i) => ({
 			id: i,
 			left: `${Math.random() * 100}%`,
 			size: `${10 + Math.random() * 12}px`,
@@ -35,7 +37,8 @@ export default function Background() {
 			rotateStart: Math.random() * 360,
 			sway: `${30 + Math.random() * 50}px`,
 		}));
-	});
+		setLeaves(generated);
+	}, []);
 
 	return (
 		<div className="fixed inset-0 z-[-2] pointer-events-none overflow-hidden bg-background perspective:1000px">

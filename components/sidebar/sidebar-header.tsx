@@ -2,7 +2,6 @@
 
 import { Menu } from "lucide-react";
 import Link from "next/link";
-
 import UserChipDropdown from "../sidebar/chip-dropdown";
 
 export interface BreadcrumbItem {
@@ -13,21 +12,20 @@ export interface BreadcrumbItem {
 
 interface SidebarHeaderProps {
 	onMenuClick: () => void;
-
 	handleLogout?: () => void;
 	blogHref?: string;
 }
 
 export default function SidebarHeader({
 	onMenuClick,
-
 	handleLogout = () => {},
 	blogHref = "/blog_admin",
 }: SidebarHeaderProps) {
 	return (
-		<header className="bg-white border-b border-slate-200 px-4 py-3">
+		// Added font-mono to the header to apply to all children
+		<header className="bg-white border-b border-slate-200 px-5 py-3 font-mono">
 			<div className="flex items-center justify-between">
-				<div className="flex items-center gap-4">
+				<div className="flex items-center gap-2">
 					{/* Mobile Menu Toggle */}
 					<button
 						type="button"
@@ -41,7 +39,7 @@ export default function SidebarHeader({
 					{/* Breadcrumbs */}
 					<nav
 						aria-label="Breadcrumb"
-						className="hidden sm:flex items-center text-sm text-slate-600"
+						className="hidden sm:flex items-center text-xs text-slate-600 uppercase tracking-wide"
 					>
 						<Link
 							href={blogHref}
@@ -53,7 +51,7 @@ export default function SidebarHeader({
 				</div>
 
 				{/* Right Section */}
-				<div className="flex items-center gap-2">
+				<div className="flex items-center not-odd:text-xs">
 					<UserChipDropdown
 						onLogout={handleLogout}
 						noBackground
