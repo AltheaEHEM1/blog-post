@@ -4,7 +4,9 @@ import { useState } from "react";
 import Sidebar from "../sidebar/sidebar";
 import Header from "../sidebar/sidebar-header";
 
-export default function BaseAdmin({ children }: Readonly<{ children: React.ReactNode }>) {
+export default function BaseAdmin({
+	children,
+}: Readonly<{ children: React.ReactNode }>) {
 	const [sidebarOpen, setSidebarOpen] = useState(false);
 
 	return (
