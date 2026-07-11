@@ -26,25 +26,23 @@ export function SidebarLink({
 }: SidebarLinkProps) {
 	const Icon = item.icon;
 
-	// Helper for shared button classes
 	const navButtonClasses = (active: boolean, isOpened: boolean) =>
 		cn(
 			"relative block w-full p-3 rounded-lg transition-all duration-200 text-gray-100 hover:bg-white/10",
 			active
-				? "bg-white/20 font-semibold"
+				? "bg-white/20 font-mono"
 				: isOpened
 					? "bg-white/5"
 					: "bg-transparent",
 		);
 
-	// Calculate if the current item (or any child) is active
 	const active = isActive(item.link || "");
 
 	if (item.links) {
 		return (
 			<div className="w-full">
 				<button
-					type="button" // Fixed: Added explicit button type
+					type="button"
 					onClick={onToggle}
 					className={navButtonClasses(active, !!opened && !isNarrow)}
 				>
@@ -54,10 +52,10 @@ export function SidebarLink({
 							isNarrow ? "justify-center" : "justify-between",
 						)}
 					>
-						<div className="flex items-center gap-4">
-							<Icon size={26} className="opacity-90" />
+						<div className="flex items-center gap-2">
+							<Icon size={20} className="opacity-90" />
 							{!isNarrow && (
-								<span className="text-[17px] font-medium">{item.label}</span>
+								<span className="text-[14px] font-mono">{item.label}</span>
 							)}
 						</div>
 						{!isNarrow && (
@@ -72,7 +70,6 @@ export function SidebarLink({
 					</div>
 				</button>
 
-				{/* Fixed: Added conditional rendering and proper closing tags */}
 				{opened && (
 					<div className="overflow-hidden">
 						<div className="flex flex-col gap-2 mt-2 pl-10">
@@ -93,8 +90,8 @@ export function SidebarLink({
 											)}
 										>
 											<div className="flex items-center gap-3">
-												<SubIcon size={20} className="opacity-90" />
-												<span className="text-[18px]">{sub.label}</span>
+												<SubIcon size={16} className="opacity-90" />
+												<span className="text-[14px]">{sub.label}</span>
 											</div>
 										</Link>
 									);
@@ -119,14 +116,14 @@ export function SidebarLink({
 				)}
 			>
 				<Icon
-					size={isNarrow ? 28 : 24}
+					size={isNarrow ? 22 : 20}
 					className={cn(
 						"transition-colors opacity-90",
 						active ? "text-white" : "text-white/70",
 					)}
 				/>
 				{!isNarrow && (
-					<span className="text-[17px] font-medium">{item.label}</span>
+					<span className="text-[14px] font-mono">{item.label}</span>
 				)}
 			</div>
 		</Link>

@@ -56,21 +56,19 @@ export default function Sidebar({ opened, close, role }: SidebarProps) {
 			/\/$/,
 			"",
 		);
-
 		if (
 			(targetPath === "/blog-admin" || targetPath === "/blog_admin") &&
 			(normalizedPath === "" || normalizedPath === "/")
 		) {
 			return true;
 		}
-
 		return normalizedPath === targetPath;
 	};
 
 	const NavContent = (
 		<div
 			className={cn(
-				"flex flex-col h-full text-white",
+				"flex flex-col h-full text-white font-mono",
 				isNarrow ? "p-2" : "p-4",
 			)}
 		>
@@ -88,7 +86,7 @@ export default function Sidebar({ opened, close, role }: SidebarProps) {
 						)}
 					>
 						{!isNarrow && (
-							<div className="animate-in font-semibold justify-center fade-in slide-in-from-left-2 duration-300">
+							<div className="animate-in font-semibold justify-center fade-in slide-in-from-left-2 duration-300 uppercase tracking-widest text-sm">
 								<span>&lt;</span>
 								<span>AAA.Blog_Post</span>
 								<span>/&gt;</span>
@@ -101,7 +99,7 @@ export default function Sidebar({ opened, close, role }: SidebarProps) {
 							onClick={close}
 							className="p-2 hover:bg-white/10 rounded-full transition-colors text-white"
 						>
-							<X size={25} />
+							<X size={20} />
 						</button>
 					) : (
 						!isNarrow && (
@@ -113,7 +111,7 @@ export default function Sidebar({ opened, close, role }: SidebarProps) {
 								{collapsed ? (
 									<ChevronRight size={20} />
 								) : (
-									<ChevronLeft size={25} />
+									<ChevronLeft size={20} />
 								)}
 							</button>
 						)
@@ -146,12 +144,10 @@ export default function Sidebar({ opened, close, role }: SidebarProps) {
 			</div>
 
 			<div className="p-3 mt-auto">
-				<div className="flex justify-center items-center opacity-50">
+				<div className="flex justify-center items-center opacity-50 text-xs">
 					{!isNarrow ? (
 						<div className="flex flex-col items-center text-center">
-							<span>&lt;</span>
-							<span>AAA.Blog_Post</span>
-							<span>/&gt;</span>
+							AAA.Blog_Post
 						</div>
 					) : (
 						<Copyright size={18} />
