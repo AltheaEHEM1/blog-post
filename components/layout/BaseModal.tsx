@@ -1,5 +1,5 @@
 "use client";
-import { X } from "lucide-react"; // Or any icon library
+import { X } from "lucide-react";
 import { useEffect } from "react";
 import { createPortal } from "react-dom";
 
@@ -18,7 +18,7 @@ export default function BaseModal({
 	title,
 	children,
 	footer,
-	width = 1080,
+	width = 400,
 }: BaseModalProps) {
 	useEffect(() => {
 		const handleEsc = (e: KeyboardEvent) => {
@@ -32,8 +32,6 @@ export default function BaseModal({
 
 	return createPortal(
 		<div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-			{/* Overlay */}
-			{/* @ts-ignore */}
 			<button
 				type="button"
 				aria-label="Close modal overlay"
@@ -50,14 +48,11 @@ export default function BaseModal({
 				style={{ maxWidth: width }}
 			>
 				{/* Header */}
-				<div className="flex shrink-0 items-center justify-between p-6 pb-2">
+				<div className="flex shrink-0 items-center justify-between p-4 pb-1">
 					{typeof title === "string" ? (
 						<h2
-							className="text-2xl font-semibold"
-							style={{
-								color: "var(--brand-primary, #800000)",
-								fontFamily: "Inter, sans-serif",
-							}}
+							className="text-xl font-semibold font-mono"
+							style={{ color: "#1e9b65" }}
 						>
 							{title}
 						</h2>

@@ -1,64 +1,129 @@
 "use client";
 
-import { type ColumnDef, type ColumnFiltersState, flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, useReactTable } from "@tanstack/react-table";
+import {
+	type ColumnDef,
+	type ColumnFiltersState,
+	flexRender,
+	getCoreRowModel,
+	getFilteredRowModel,
+	getPaginationRowModel,
+	useReactTable,
+} from "@tanstack/react-table";
 import { Eye, Pencil, Plus, Search, Trash2 } from "lucide-react";
+import { useMemo, useState } from "react";
+import {
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+	AlertDialogTrigger,
+} from "@/components/alert-dialog/alert-dialog";
+import { Button } from "@/components/button/button";
 import {
 	Pagination,
 	PaginationContent,
 	PaginationItem,
 	PaginationLink,
 	PaginationNext,
-	PaginationPrevious
+	PaginationPrevious,
 } from "@/components/pagination";
-import { useMemo, useState } from "react";
-import { Button } from '@/components/button/button';
+import type { BlogPost } from "./page";
 
-type BlogPost = {
-	id: string;
-	title: string;
-	category: string;
-	createdAt: string;
-};
+interface BlogTableProps {
+	data: BlogPost[];
+	onAdd: () => void;
+	onEdit: (blog: BlogPost) => void;
+	onView: (blog: BlogPost) => void;
+	onDelete: (id: string) => void;
+}
 
-export default function BlogTable() {
-	const [data] = useState<BlogPost[]>([
-		{ id: "1", title: "Getting Started with Next.js", createdAt: "2026-07-01", category: "Tech" },
-		{ id: "2", title: "Advanced React Patterns", createdAt: "2026-07-02", category: "Tech" },
-		{ id: "3", title: "Understanding TypeScript", createdAt: "2026-07-03", category: "Tech" },
-		{ id: "4", title: "Design Systems in 2026", createdAt: "2026-07-04", category: "Design" },
-		{ id: "5", title: "Optimizing Web Performance", createdAt: "2026-07-05", category: "Performance" },
-		{ id: "6", title: "Deploying with Vercel", createdAt: "2026-07-06", category: "DevOps" },
-		{ id: "7", title: "State Management with TanStack Table", createdAt: "2026-07-07", category: "Tech" },
-		{ id: "8", title: "CSS Grid vs Flexbox", createdAt: "2026-07-08", category: "Design" },
-		{ id: "9", title: "Using React Query", createdAt: "2026-07-09", category: "Tech" },
-		{ id: "10", title: "Testing React Components", createdAt: "2026-07-10", category: "Testing" },
-		{ id: "11", title: "Accessibility Best Practices", createdAt: "2026-07-11", category: "UX" },
-		{ id: "12", title: "Serverless Functions Overview", createdAt: "2026-07-12", category: "Backend" },
-		{ id: "13", title: "Testing React Components", createdAt: "2026-07-10", category: "Testing" },
-		{ id: "14", title: "Accessibility Best Practices", createdAt: "2026-07-11", category: "UX" },
-		{ id: "15", title: "Serverless Functions Overview", createdAt: "2026-07-12", category: "Backend" },
-	]);
-
+export default function BlogTable({
+	data,
+	onAdd,
+	onEdit,
+	onView,
+	onDelete,
+}: BlogTableProps) {
 	const [globalFilter, setGlobalFilter] = useState("");
 	const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 	const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 });
 
-	const columns = useMemo<ColumnDef<BlogPost>[]>(() => [
-		{ accessorKey: "title", header: "Title" },
-		{ accessorKey: "category", header: "Category" },
-		{ accessorKey: "createdAt", header: "Created At" },
-		{
-			id: "actions",
-			header: "Actions",
-			cell: () => (
-				<div className="flex gap-2 justify-center">
-					<button type="button" className="text-blue-600 hover:scale-110 transition-transform"><Eye size={15} /></button>
-					<button type="button" className="text-yellow-600 hover:scale-110 transition-transform"><Pencil size={15} /></button>
-					<button type="button" className="text-red-600 hover:scale-110 transition-transform"><Trash2 size={15} /></button>
-				</div>
-			),
-		},
-	], []);
+	const columns = useMemo<ColumnDef<BlogPost>[]>(
+		() => [
+			{ accessorKey: "title", header: "Title" },
+			{ accessorKey: "category", header: "Category" },
+			{ accessorKey: "createdAt", header: "Created At" },
+			{
+				id: "actions",
+				header: "Actions",
+				cell: (info) => (
+					<div className="flex gap-2 justify-center">
+						<button
+							type="button"
+							className="text-blue-600 hover:scale-110 transition-transform cursor-pointer"
+							onClick={() => onView(info.row.original)}
+							title="View Post"
+						>
+							<Eye size={15} />
+						</button>
+						<button
+							type="button"
+							className="text-yellow-600 hover:scale-110 transition-transform cursor-pointer"
+							onClick={() => onEdit(info.row.original)}
+							title="Edit Post"
+						>
+							<Pencil size={15} />
+						</button>
+
+						<AlertDialog>
+							<AlertDialogTrigger
+								className="text-red-600 hover:scale-110 transition-transform cursor-pointer"
+								title="Delete Post"
+							>
+								<Trash2 size={15} />
+							</AlertDialogTrigger>
+
+							<AlertDialogContent>
+								<AlertDialogHeader>
+									{/* Added font-mono and text-sm */}
+									<AlertDialogTitle className="font-mono text-sm">
+										Confirm Deletion
+									</AlertDialogTitle>
+
+									{/* Added font-mono and text-sm */}
+									<AlertDialogDescription className="font-mono text-sm">
+										Are you sure you want to delete this post? This action
+										cannot be undone.
+									</AlertDialogDescription>
+								</AlertDialogHeader>
+
+								<AlertDialogFooter>
+									<AlertDialogCancel size="sm" className="font-mono text-sm">
+										Cancel
+									</AlertDialogCancel>
+
+									<AlertDialogAction
+										size="sm"
+										className="font-mono text-sm bg-destructive! text-destructive-foreground hover:!bg-destructive/90!"
+										onClick={() => {
+											onDelete(info.row.original.id);
+										}}
+									>
+										Delete
+									</AlertDialogAction>
+								</AlertDialogFooter>
+							</AlertDialogContent>
+						</AlertDialog>
+					</div>
+				),
+			},
+		],
+		[onDelete, onEdit, onView],
+	);
 
 	const table = useReactTable({
 		data,
@@ -88,7 +153,9 @@ export default function BlogTable() {
 				<div className="relative h-8">
 					<select
 						className="h-full w-full appearance-none pl-3 pr-8 text-xs rounded-md border border-gray-200 outline-none transition-all cursor-pointer hover:border-green-300 focus:border-green-500 focus:ring-1 focus:ring-green-400 text-gray-700 font-medium"
-						onChange={(e) => table.getColumn("category")?.setFilterValue(e.target.value)}
+						onChange={(e) =>
+							table.getColumn("category")?.setFilterValue(e.target.value)
+						}
 					>
 						<option value="">Category</option>
 						<option value="Tech">Tech</option>
@@ -96,9 +163,21 @@ export default function BlogTable() {
 						<option value="Performance">Performance</option>
 						<option value="DevOps">DevOps</option>
 						<option value="UX">UX</option>
+						<option value="Backend">Backend</option>
+						<option value="Testing">Testing</option>
 					</select>
 					<div className="pointer-events-none absolute right-2 top-0 flex h-full items-center text-gray-400">
-						<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+						<svg
+							width="12"
+							height="12"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							strokeWidth="2"
+							strokeLinecap="round"
+							strokeLinejoin="round"
+						>
+							<title>Dropdown Arrow</title>
 							<polyline points="6 9 12 15 18 9"></polyline>
 						</svg>
 					</div>
@@ -107,11 +186,15 @@ export default function BlogTable() {
 				<input
 					type="date"
 					className="h-8 px-2 text-xs rounded-md border border-gray-200 outline-none"
-					onChange={(e) => table.getColumn("createdAt")?.setFilterValue(e.target.value)}
+					onChange={(e) =>
+						table.getColumn("createdAt")?.setFilterValue(e.target.value)
+					}
 				/>
 
 				<div className="ml-auto">
-					<Button type="button" variant="green" size="sm"><Plus size={18} /> Add Post</Button>
+					<Button type="button" variant="green" size="sm" onClick={onAdd}>
+						<Plus size={18} /> Add Post
+					</Button>
 				</div>
 			</div>
 
@@ -123,12 +206,17 @@ export default function BlogTable() {
 							<th className="p-3 w-1/2 text-green-800 border-b">Title</th>
 							<th className="p-3 w-1/4 text-green-800 border-b">Category</th>
 							<th className="p-3 w-1/6 text-green-800 border-b">Created At</th>
-							<th className="p-3 w-1/12 text-green-800 border-b text-center">Actions</th>
+							<th className="p-3 w-1/12 text-green-800 border-b text-center">
+								Actions
+							</th>
 						</tr>
 					</thead>
 					<tbody className="divide-y divide-gray-100 text-xs">
 						{table.getRowModel().rows.map((row) => (
-							<tr key={row.id} className="bg-green-50 hover:bg-green-100 transition-colors">
+							<tr
+								key={row.id}
+								className="bg-green-50 hover:bg-green-100 transition-colors"
+							>
 								{row.getVisibleCells().map((cell) => (
 									<td key={cell.id} className="p-3 text-gray-600 truncate">
 										{flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -149,14 +237,14 @@ export default function BlogTable() {
 							disabled={!table.getCanPreviousPage()}
 						/>
 
-						{Array.from({ length: table.getPageCount() }).map((_, i) => (
-							<PaginationItem key={i}>
+						{table.getPageOptions().map((pageNumber) => (
+							<PaginationItem key={pageNumber}>
 								<PaginationLink
 									size="xs"
-									isActive={i === pagination.pageIndex}
-									onClick={() => table.setPageIndex(i)}
+									isActive={pageNumber === pagination.pageIndex}
+									onClick={() => table.setPageIndex(pageNumber)}
 								>
-									{i + 1}
+									{pageNumber + 1}
 								</PaginationLink>
 							</PaginationItem>
 						))}
@@ -169,7 +257,6 @@ export default function BlogTable() {
 					</PaginationContent>
 				</Pagination>
 			</div>
-
 		</div>
 	);
 }

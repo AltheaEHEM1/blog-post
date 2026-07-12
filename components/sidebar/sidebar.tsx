@@ -164,7 +164,7 @@ export default function Sidebar({ opened, close, role }: SidebarProps) {
 					onMouseEnter={() => setIsHovered(true)}
 					onMouseLeave={() => setIsHovered(false)}
 					className={cn(
-						"sticky top-0 h-screen transition-all duration-300 z-100",
+						"sticky top-0 h-screen transition-all duration-300 z-30",
 						isNarrow ? "w-20" : "w-64",
 					)}
 				>
@@ -179,7 +179,7 @@ export default function Sidebar({ opened, close, role }: SidebarProps) {
 					<button
 						type="button"
 						className={cn(
-							"fixed inset-0 bg-black/50 z-999 transition-opacity duration-300 w-full cursor-pointer",
+							"fixed inset-0 bg-black/50 z-40 transition-opacity duration-300 w-full cursor-pointer",
 							opened ? "opacity-100" : "opacity-0 pointer-events-none",
 						)}
 						onClick={close}
@@ -187,7 +187,7 @@ export default function Sidebar({ opened, close, role }: SidebarProps) {
 					/>
 					<aside
 						className={cn(
-							"fixed inset-y-0 left-0 w-75 bg-(--color-ft-bg) z-1000 transition-transform duration-300",
+							"fixed inset-y-0 left-0 w-75 bg-(--color-ft-bg) z-45 transition-transform duration-300",
 							opened ? "translate-x-0" : "-translate-x-full",
 						)}
 					>
