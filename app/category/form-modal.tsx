@@ -22,7 +22,7 @@ export default function FormModal({
 	useEffect(() => {
 		setCategory(initialData?.category ?? "");
 		setDescription(initialData?.description ?? ""); // reset description on open
-	}, [initialData, opened]);
+	}, [initialData]);
 
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
@@ -61,11 +61,12 @@ export default function FormModal({
 						className="block text-xs font-medium text-gray-700 mb-0.5 font-mono"
 						htmlFor="category-input"
 					>
-						Category Name
+						Category Name<span className="text-red-500">*</span>
 					</label>
 					<input
 						id="category-input"
 						type="text"
+						required
 						value={category}
 						onChange={(e) => setCategory(e.target.value)}
 						className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-mono shadow-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
@@ -77,12 +78,13 @@ export default function FormModal({
 						className="block text-xs font-medium text-gray-700 mb-0.5 font-mono"
 						htmlFor="description-input"
 					>
-						Description
+						Description<span className="text-red-500">*</span>
 					</label>
 					<textarea
 						id="description-input"
 						rows={2}
 						value={description}
+						required
 						onChange={(e) => setDescription(e.target.value)}
 						className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-mono shadow-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
 						placeholder="Enter description"

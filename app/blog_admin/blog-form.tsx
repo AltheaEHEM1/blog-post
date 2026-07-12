@@ -1,22 +1,14 @@
 "use client";
 
 import { ArrowLeft, ImageIcon, X } from "lucide-react";
-import { type ChangeEvent, type FormEvent, useEffect, useState } from "react";
+import Image from "next/image";
+import { type ChangeEvent, type FormEvent, useState } from "react";
 import { Button } from "@/components/button/button";
 import type { BlogPost } from "./page";
 
 interface BlogFormProps {
-	/**
-	 * Optional initial data for editing an existing blog.
-	 */
 	initialData?: BlogPost;
-	/**
-	 * Callback with form values when the user submits.
-	 */
 	onSubmit: (values: Omit<BlogPost, "id">) => void;
-	/**
-	 * Callback to return to the list view.
-	 */
 	onCancel: () => void;
 }
 
@@ -30,30 +22,8 @@ export default function BlogForm({
 	const [body, setBody] = useState("");
 	const [category, setCategory] = useState("");
 	const [authorName, setAuthorName] = useState("");
-	const [createdAt, setCreatedAt] = useState("");
+	const [createdAt, _setCreatedAt] = useState("");
 	const [imagePreview, setImagePreview] = useState<string>("");
-
-	// Populate fields when editing or opening
-	useEffect(() => {
-		if (initialData) {
-			setTitle(initialData.title ?? "");
-			setSubtitle(initialData.subtitle ?? "");
-			setBody(initialData.body ?? "");
-			setCategory(initialData.category ?? "");
-			setAuthorName(initialData.authorName ?? "");
-			setCreatedAt(initialData.createdAt ?? "");
-			setImagePreview(initialData.imageUrl ?? "");
-		} else {
-			// Reset all fields for fresh add, set default date to today
-			setTitle("");
-			setSubtitle("");
-			setBody("");
-			setCategory("");
-			setAuthorName("");
-			setCreatedAt(new Date().toISOString().split("T")[0]);
-			setImagePreview("");
-		}
-	}, [initialData]);
 
 	const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files?.[0] ?? null;
@@ -72,7 +42,7 @@ export default function BlogForm({
 
 	const handleSubmit = (e: FormEvent) => {
 		e.preventDefault();
-		if (!title.trim() || !body.trim()) return; // basic validation
+		if (!title.trim() || !body.trim()) return;
 
 		const data: Omit<BlogPost, "id"> = {
 			title: title.trim(),
@@ -98,18 +68,61 @@ export default function BlogForm({
 			</button>
 
 			{/* Main Form Container */}
-			<div className="bg-white/90 backdrop-blur-sm border border-gray-200/80 rounded-xl p-6 shadow-sm max-w-4xl w-full">
-				<h2 className="text-xl font-bold font-mono text-green-900 mb-6 pb-2 border-b border-gray-100">
-					{initialData ? "Modify Article Details" : "Write a New Article"}
-				</h2>
-
+			<div className="px-7">
 				<form className="space-y-6" onSubmit={handleSubmit}>
+					<div className="flex flex-col">
+						<label
+							className="block text-xs font-semibold mb-1 font-mono text-gray-700"
+							htmlFor="image-input"
+						>
+							Cover Image
+						</label>
+						{imagePreview ? (
+							<div className="relative border border-gray-200 rounded-lg p-2 flex items-center gap-3 bg-gray-50/50">
+								<Image
+									src={imagePreview}
+									alt="Preview of the uploaded blog cover"
+									className="object-cover rounded"
+									width={80}
+									height={56}
+								/>
+								<div className="flex-1 min-w-0">
+									<p className="text-xs font-mono text-gray-500 truncate">
+										Cover Image Selected
+									</p>
+								</div>
+								<button
+									type="button"
+									onClick={handleRemoveImage}
+									className="p-1 rounded-full text-red-500 hover:bg-red-50 hover:text-red-600 transition-colors shrink-0 cursor-pointer"
+									title="Remove Image"
+								>
+									<X size={16} />
+								</button>
+							</div>
+						) : (
+							<div className="relative border border-dashed border-gray-300 rounded-lg hover:border-green-400 hover:bg-green-50/10 transition-colors p-15 flex flex-col items-center justify-center gap-1.5 cursor-pointer">
+								<ImageIcon size={30} className="text-gray-400" />
+								<span className="text-xs text-gray-500 font-mono">
+									Upload high-res cover image
+								</span>
+								<input
+									id="image-input"
+									type="file"
+									accept="image/*"
+									onChange={handleImageChange}
+									className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+								/>
+							</div>
+						)}
+					</div>
+
 					{/* Title and Subtitle Row */}
-					<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+					<div className="grid grid-cols-1 md:grid-cols-2 gap-2">
 						{/* Title */}
 						<div className="flex flex-col">
 							<label
-								className="block text-xs font-semibold mb-1 font-mono text-gray-700"
+								className="block text-xs font-semibold mb-0.5 font-mono text-gray-500"
 								htmlFor="title-input"
 							>
 								Title <span className="text-red-500">*</span>
@@ -119,8 +132,8 @@ export default function BlogForm({
 								type="text"
 								value={title}
 								onChange={(e) => setTitle(e.target.value)}
-								className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-mono focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
-								placeholder="Enter a descriptive title..."
+								className="w-full rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs font-mono focus:border-green-50 focus:outline-none focus:ring-1 focus:ring-green-50"
+								placeholder="Enter title"
 								required
 							/>
 						</div>
@@ -128,7 +141,7 @@ export default function BlogForm({
 						{/* Subtitle */}
 						<div className="flex flex-col">
 							<label
-								className="block text-xs font-semibold mb-1 font-mono text-gray-700"
+								className="block text-xs font-semibold mb-0.5 font-mono text-gray-500"
 								htmlFor="subtitle-input"
 							>
 								Subtitle
@@ -138,139 +151,69 @@ export default function BlogForm({
 								type="text"
 								value={subtitle}
 								onChange={(e) => setSubtitle(e.target.value)}
-								className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-mono focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
-								placeholder="Enter article hook or summary..."
+								className="w-full rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs font-mono focus:border-green-50 focus:outline-none focus:ring-1 focus:ring-green-50"
+								placeholder="Article hook..."
 							/>
 						</div>
 					</div>
 
 					{/* Author Name and Category Row */}
-					<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+					<div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-3">
 						{/* Author Name */}
 						<div className="flex flex-col">
 							<label
-								className="block text-xs font-semibold mb-1 font-mono text-gray-700"
+								className="block text-xs font-semibold mb-0.5 font-mono text-gray-500"
 								htmlFor="author-input"
 							>
-								Author Name
+								Author
 							</label>
 							<input
 								id="author-input"
 								type="text"
 								value={authorName}
 								onChange={(e) => setAuthorName(e.target.value)}
-								className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-mono focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
-								placeholder="Enter writer's name..."
+								className="w-full rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs font-mono focus:border-green-50 focus:outline-none focus:ring-1 focus:ring-green-50"
+								placeholder="Writer's name..."
 							/>
 						</div>
 
 						{/* Category */}
 						<div className="flex flex-col">
 							<label
-								className="block text-xs font-semibold mb-1 font-mono text-gray-700"
+								className="block text-xs font-semibold mb-0.5 font-mono text-gray-500 "
 								htmlFor="category-input"
 							>
-								Category
+								Category <span className="text-red-500">*</span>
 							</label>
 							<select
 								id="category-input"
 								value={category}
 								onChange={(e) => setCategory(e.target.value)}
-								className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm font-mono focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500 text-gray-700"
+								className="w-full rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs font-mono focus:border-green-50 focus:outline-none focus:ring-1 focus:ring-green-50 text-gray-700"
 							>
-								<option value="">Select a category</option>
+								<option value="">Select category</option>
 								<option value="Tech">Tech</option>
 								<option value="Design">Design</option>
 								<option value="Performance">Performance</option>
-								<option value="DevOps">DevOps</option>
-								<option value="UX">UX</option>
-								<option value="Backend">Backend</option>
-								<option value="Testing">Testing</option>
 							</select>
 						</div>
 					</div>
 
-					{/* Created At and Image Row */}
-					<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-						{/* Created At */}
-						<div className="flex flex-col">
-							<label
-								className="block text-xs font-semibold mb-1 font-mono text-gray-700"
-								htmlFor="created-at-input"
-							>
-								Created At
-							</label>
-							<input
-								id="created-at-input"
-								type="date"
-								value={createdAt}
-								onChange={(e) => setCreatedAt(e.target.value)}
-								className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-mono focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500 text-gray-700"
-							/>
-						</div>
-
-						{/* Image Upload Block */}
-						<div className="flex flex-col">
-							<label
-								className="block text-xs font-semibold mb-1 font-mono text-gray-700"
-								htmlFor="image-input"
-							>
-								Cover Image
-							</label>
-							{imagePreview ? (
-								<div className="relative border border-gray-200 rounded-lg p-2 flex items-center gap-3 bg-gray-50/50">
-									<img
-										src={imagePreview}
-										alt="Preview"
-										className="h-14 w-20 object-cover rounded border border-gray-200 shrink-0"
-									/>
-									<div className="flex-1 min-w-0">
-										<p className="text-xs font-mono text-gray-500 truncate">
-											Cover Image Selected
-										</p>
-									</div>
-									<button
-										type="button"
-										onClick={handleRemoveImage}
-										className="p-1 rounded-full text-red-500 hover:bg-red-50 hover:text-red-600 transition-colors shrink-0 cursor-pointer"
-										title="Remove Image"
-									>
-										<X size={16} />
-									</button>
-								</div>
-							) : (
-								<div className="relative border border-dashed border-gray-300 rounded-lg hover:border-green-400 hover:bg-green-50/10 transition-colors p-3 flex flex-col items-center justify-center gap-1.5 cursor-pointer">
-									<ImageIcon size={20} className="text-gray-400" />
-									<span className="text-[10px] text-gray-500 font-mono">
-										Upload high-res cover image
-									</span>
-									<input
-										id="image-input"
-										type="file"
-										accept="image/*"
-										onChange={handleImageChange}
-										className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-									/>
-								</div>
-							)}
-						</div>
-					</div>
-
 					{/* Body Content */}
-					<div className="flex flex-col">
+					<div className="flex flex-col mt-3">
 						<label
-							className="block text-xs font-semibold mb-1 font-mono text-gray-700"
+							className="block text-xs font-semibold mb-0.5 font-mono text-gray-500"
 							htmlFor="body-input"
 						>
-							Body Content <span className="text-red-500">*</span>
+							Body <span className="text-red-500">*</span>
 						</label>
 						<textarea
 							id="body-input"
 							rows={4}
 							value={body}
 							onChange={(e) => setBody(e.target.value)}
-							className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-mono focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500 leading-relaxed"
-							placeholder="Compose your article body content here..."
+							className="w-full rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs font-mono focus:border-green-50 focus:outline-none focus:ring-1 focus:ring-green-50 leading-relaxed"
+							placeholder="Compose your article..."
 							required
 						/>
 					</div>
@@ -280,18 +223,12 @@ export default function BlogForm({
 						<Button
 							type="button"
 							variant="ghost"
-							size="sm"
 							onClick={onCancel}
 							className="cursor-pointer"
 						>
 							Cancel
 						</Button>
-						<Button
-							type="submit"
-							variant="green"
-							size="sm"
-							className="cursor-pointer"
-						>
+						<Button type="submit" variant="green" className="cursor-pointer">
 							{initialData ? "Update Post" : "Publish Post"}
 						</Button>
 					</div>

@@ -199,23 +199,26 @@ export default function BlogAdmin() {
 		setSelectedBlog(null);
 	};
 
-	// Determine header information based on current view
 	const headerInfo = {
 		list: {
 			title: "Blog post",
 			description: "Manage your published articles, and content for your blog.",
+			showArea: true,
 		},
 		add: {
-			title: "Add New Post",
+			title: "Write a New Article",
 			description: "Create and publish a new article on your blog.",
+			showArea: false,
 		},
 		edit: {
-			title: "Edit Blog Post",
+			title: "Modify Article Details",
 			description: `Modify the details of "${selectedBlog?.title || "the blog post"}"`,
+			showArea: false,
 		},
 		view: {
 			title: "View Blog Post",
 			description: `Reading details of "${selectedBlog?.title || "the blog post"}"`,
+			showArea: false,
 		},
 	}[view];
 
@@ -225,9 +228,9 @@ export default function BlogAdmin() {
 				title={headerInfo.title}
 				description={headerInfo.description}
 				area="Administrator"
-				showArea={true}
+				showArea={headerInfo.showArea}
 			/>
-			<div className="mt-6 flex-1 overflow-hidden">
+			<div className="flex-1 overflow-hidden">
 				{view === "list" && (
 					<BlogTable
 						data={data}

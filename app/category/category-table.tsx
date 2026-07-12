@@ -9,8 +9,9 @@ import {
 	getPaginationRowModel,
 	useReactTable,
 } from "@tanstack/react-table";
+
 import { Eye, Pencil, Plus, Search, Trash2 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import FormModal from "@/app/category/form-modal";
 import ViewModal from "@/app/category/view-modal";
 import {
@@ -43,18 +44,8 @@ type Category = {
 
 export default function CategoryTable() {
 	const [data, setData] = useState<Category[]>([
-		{
-			id: "1",
-			category: "Tech",
-			description: "rfrdrdddddddddddrdrdfdfdrfdfrfdfrdfrf",
-			createdAt: "2026-07-01",
-		},
-		{
-			id: "2",
-			category: "UX",
-			description: "rfrdrdddddddddddrdrdfdfdrfdfrfdfrdfrf",
-			createdAt: "2026-07-02",
-		},
+		{ id: "1", category: "Tech", description: "...", createdAt: "2026-07-01" },
+		{ id: "2", category: "UX", description: "...", createdAt: "2026-07-02" },
 	]);
 
 	const [globalFilter, setGlobalFilter] = useState("");
@@ -64,16 +55,11 @@ export default function CategoryTable() {
 	const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 });
 	const [viewOpen, setViewOpen] = useState(false);
 	const [viewCategory, setViewCategory] = useState<Category | null>(null);
-	const [categoryToDelete, setCategoryToDelete] = useState<Category | null>(
-		null,
-	);
 
-	const handleDelete = () => {
-		if (categoryToDelete) {
-			setData((prev) => prev.filter((cat) => cat.id !== categoryToDelete.id));
-			setCategoryToDelete(null);
-		}
-	};
+	const onDelete = useCallback((id: string) => {
+		setData((prev) => prev.filter((cat) => cat.id !== id));
+	}, []);
+
 	const columns = useMemo<ColumnDef<Category>[]>(
 		() => [
 			{ accessorKey: "category", header: "Category" },
@@ -104,11 +90,41 @@ export default function CategoryTable() {
 						>
 							<Pencil size={15} />
 						</button>
+						<AlertDialog>
+							<AlertDialogTrigger
+								className="text-red-600 hover:scale-110 transition-transform cursor-pointer"
+								title="Delete Post"
+							>
+								<Trash2 size={15} />
+							</AlertDialogTrigger>
+							<AlertDialogContent>
+								<AlertDialogHeader>
+									<AlertDialogTitle className="font-mono text-sm">
+										Confirm Deletion
+									</AlertDialogTitle>
+									<AlertDialogDescription className="font-mono text-sm">
+										Are you sure you want to delete this category?
+									</AlertDialogDescription>
+								</AlertDialogHeader>
+								<AlertDialogFooter>
+									<AlertDialogCancel size="sm" className="font-mono text-sm">
+										Cancel
+									</AlertDialogCancel>
+									<AlertDialogAction
+										size="sm"
+										className="font-mono text-sm !bg-destructive !text-destructive-foreground hover:!bg-destructive/90"
+										onClick={() => onDelete(row.original.id)}
+									>
+										Delete
+									</AlertDialogAction>
+								</AlertDialogFooter>
+							</AlertDialogContent>
+						</AlertDialog>
 					</div>
 				),
 			},
 		],
-		[],
+		[onDelete],
 	);
 
 	const table = useReactTable({
@@ -161,7 +177,7 @@ export default function CategoryTable() {
 				</div>
 
 				<div className="flex-1 overflow-auto border border-gray-200 rounded-md">
-					<table className="w-full min-w-[600px] text-left text-sm font-mono border-collapse">
+					<table className="w-full min-w-150 text-left text-sm font-mono border-collapse">
 						<thead className="bg-green-100 sticky top-0 z-10">
 							<tr>
 								<th className="p-3 w-[20%] text-green-800 border-b text-left font-semibold">
@@ -213,14 +229,19 @@ export default function CategoryTable() {
 								disabled={!table.getCanPreviousPage()}
 							/>
 
-							{Array.from({ length: table.getPageCount() }).map((_, i) => (
-								<PaginationItem key={i}>
+							{Array.from(
+								{ length: table.getPageCount() },
+								(_, i) => i + 1,
+							).map((pageNumber) => (
+								<PaginationItem key={pageNumber}>
 									<PaginationLink
 										size="xs"
-										isActive={i === pagination.pageIndex}
-										onClick={() => table.setPageIndex(i)}
+										isActive={
+											table.getState().pagination.pageIndex + 1 === pageNumber
+										}
+										onClick={() => table.setPageIndex(pageNumber - 1)}
 									>
-										{i + 1}
+										{pageNumber}
 									</PaginationLink>
 								</PaginationItem>
 							))}

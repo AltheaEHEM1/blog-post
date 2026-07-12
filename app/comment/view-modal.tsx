@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@/components/button/button";
 import BaseModal from "@/components/layout/BaseModal";
 
 interface CommentData {
@@ -80,7 +79,7 @@ export default function ViewModal({
 					</div>
 					<div className="flex items-start gap-4">
 						<span className="font-medium w-32 shrink-0">Comment:</span>
-						<p className="flex-1 break-words">{data.comment}</p>
+						<p className="flex-1 wrap-break-words">{data.comment}</p>
 					</div>
 					<div className="flex items-center">
 						<span className="font-medium w-32">Created At:</span>

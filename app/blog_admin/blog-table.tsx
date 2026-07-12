@@ -51,7 +51,6 @@ export default function BlogTable({
 	const [globalFilter, setGlobalFilter] = useState("");
 	const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 	const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 });
-	const [blogToDelete, setBlogToDelete] = useState<BlogPost | null>(null);
 
 	const columns = useMemo<ColumnDef<BlogPost>[]>(
 		() => [
@@ -79,38 +78,39 @@ export default function BlogTable({
 						>
 							<Pencil size={15} />
 						</button>
+
 						<AlertDialog>
-							<AlertDialogTrigger asChild>
-								<button
-									type="button"
-									className="text-red-600 hover:scale-110 transition-transform cursor-pointer"
-									onClick={() => setBlogToDelete(info.row.original)}
-									title="Delete Post"
-								>
-									<Trash2 size={15} />
-								</button>
+							<AlertDialogTrigger
+								className="text-red-600 hover:scale-110 transition-transform cursor-pointer"
+								title="Delete Post"
+							>
+								<Trash2 size={15} />
 							</AlertDialogTrigger>
+
 							<AlertDialogContent>
 								<AlertDialogHeader>
-									<AlertDialogTitle>Confirm Deletion</AlertDialogTitle>
-									<AlertDialogDescription>
+									{/* Added font-mono and text-sm */}
+									<AlertDialogTitle className="font-mono text-sm">
+										Confirm Deletion
+									</AlertDialogTitle>
+
+									{/* Added font-mono and text-sm */}
+									<AlertDialogDescription className="font-mono text-sm">
 										Are you sure you want to delete this post? This action
 										cannot be undone.
 									</AlertDialogDescription>
 								</AlertDialogHeader>
+
 								<AlertDialogFooter>
-									<AlertDialogCancel onClick={() => setBlogToDelete(null)}>
+									<AlertDialogCancel size="sm" className="font-mono text-sm">
 										Cancel
 									</AlertDialogCancel>
+
 									<AlertDialogAction
+										size="sm"
+										className="font-mono text-sm bg-destructive! text-destructive-foreground hover:!bg-destructive/90!"
 										onClick={() => {
-											if (blogToDelete) {
-												onDelete(blogToDelete.id);
-												setBlogToDelete(null);
-											} else {
-												// Fallback if blogToDelete was not set in state fast enough
-												onDelete(info.row.original.id);
-											}
+											onDelete(info.row.original.id);
 										}}
 									>
 										Delete
@@ -122,7 +122,7 @@ export default function BlogTable({
 				),
 			},
 		],
-		[blogToDelete, onDelete, onEdit, onView],
+		[onDelete, onEdit, onView],
 	);
 
 	const table = useReactTable({

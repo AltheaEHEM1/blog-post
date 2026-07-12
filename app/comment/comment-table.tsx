@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/incompatible-library */
 "use client";
 
 import {
@@ -9,14 +10,8 @@ import {
 	getPaginationRowModel,
 	useReactTable,
 } from "@tanstack/react-table";
-import { Eye, Trash2 } from "lucide-react";
-import {
-	type Dispatch,
-	type SetStateAction,
-	useEffect,
-	useMemo,
-	useState,
-} from "react";
+import { Eye } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import ViewModal from "@/app/comment/view-modal";
 import {
 	Pagination,
@@ -39,8 +34,7 @@ type BlogPost = {
 export default function BlogTable() {
 	const [selectedComment, setSelectedComment] = useState<BlogPost | null>(null);
 	const [modalOpen, setModalOpen] = useState(false);
-
-	const [data, setData] = useState<BlogPost[]>([
+	const [data] = useState<BlogPost[]>([
 		{
 			id: "1",
 			username: "John Doe",
@@ -141,21 +135,23 @@ export default function BlogTable() {
 
 				<div className="flex gap-1">
 					<button
+						type="button"
 						onClick={() => setActiveTab("pending")}
 						className={`px-4 py-1.5 text-xs rounded-t-md font-medium transition-all ${
 							activeTab === "pending"
-								? "bg-green-700 text-white shadow-sm"
-								: "bg-green-50 text-green-700 border-t border-x border-green-200 hover:bg-green-100"
+								? "bg-green-700 text-white"
+								: "bg-green-50 text-green-700 border"
 						}`}
 					>
 						For Approval
 					</button>
 					<button
+						type="button"
 						onClick={() => setActiveTab("approved")}
 						className={`px-4 py-1.5 text-xs rounded-t-md font-medium transition-all ${
 							activeTab === "approved"
-								? "bg-green-700 text-white shadow-sm"
-								: "bg-green-50 text-green-700 border-t border-x border-green-200 hover:bg-green-100"
+								? "bg-green-700 text-white"
+								: "bg-green-50 text-green-700 border"
 						}`}
 					>
 						Approved
@@ -163,7 +159,7 @@ export default function BlogTable() {
 				</div>
 
 				<div className="flex-1 overflow-auto border border-gray-200 rounded-b-md">
-					<table className="w-full min-w-[600px] text-left text-sm font-mono border-collapse">
+					<table className="w-full min-w-150 text-left text-sm font-mono border-collapse">
 						<thead className="bg-green-100 sticky top-0 z-10">
 							{table.getHeaderGroups().map((headerGroup) => (
 								<tr key={headerGroup.id}>
@@ -204,7 +200,8 @@ export default function BlogTable() {
 								disabled={!table.getCanPreviousPage()}
 							/>
 							{Array.from({ length: table.getPageCount() }).map((_, i) => (
-								<PaginationItem key={i}>
+								// biome-ignore lint/suspicious/noArrayIndexKey: Page numbers are stable in this pagination context
+								<PaginationItem key={i + 1}>
 									<PaginationLink
 										size="xs"
 										isActive={i === pagination.pageIndex}
