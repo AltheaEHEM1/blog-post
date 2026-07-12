@@ -1,96 +1,80 @@
+"use client";
+
 import { Check } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useActionState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/button/button";
 import BaseModal from "@/components/layout/BaseModal";
+import { createCategory, updateCategory } from "@/actions/category-action";
 
 interface FormModalProps {
-	opened: boolean;
-	onClose: () => void;
-	initialData?: { category: string; description?: string };
-	onSubmit: (values: { category: string; description?: string }) => void;
+  opened: boolean;
+  onClose: () => void;
+  initialData?: { id: string; name: string; description: string | null };
 }
 
-export default function FormModal({
-	opened,
-	onClose,
-	initialData,
-	onSubmit,
-}: FormModalProps) {
-	const [category, setCategory] = useState("");
-	const [description, setDescription] = useState("");
+import { useState } from "react";
 
-	useEffect(() => {
-		setCategory(initialData?.category ?? "");
-		setDescription(initialData?.description ?? ""); // reset description on open
-	}, [initialData]);
+export default function FormModal({ opened, onClose, initialData }: FormModalProps) {
+  const action = initialData ? updateCategory : createCategory;
+  const [state, formAction, isPending] = useActionState(action, null);
 
-	const handleSubmit = (e: React.FormEvent) => {
-		e.preventDefault();
-		if (!category.trim()) return;
-		onSubmit({
-			category: category.trim(),
-			description: description.trim() || undefined,
-		});
-	};
+  const router = useRouter();
 
-	return (
-		<BaseModal
-			opened={opened}
-			onClose={onClose}
-			title={initialData ? "Edit Category" : "Add Category"}
-			footer={
-				<div className="flex justify-end gap-2">
-					<Button type="button" variant="ghost" size="sm" onClick={onClose}>
-						Cancel
-					</Button>
-					<Button
-						type="button"
-						variant="green"
-						size="sm"
-						onClick={handleSubmit}
-					>
-						{initialData ? "Update" : "Create"}
-						<Check className="ml-1" size={14} />
-					</Button>
-				</div>
-			}
-		>
-			<form onSubmit={handleSubmit} className="space-y-2">
-				<div>
-					<label
-						className="block text-xs font-medium text-gray-700 mb-0.5 font-mono"
-						htmlFor="category-input"
-					>
-						Category Name<span className="text-red-500">*</span>
-					</label>
-					<input
-						id="category-input"
-						type="text"
-						required
-						value={category}
-						onChange={(e) => setCategory(e.target.value)}
-						className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-mono shadow-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
-						placeholder="Enter category"
-					/>
-				</div>
-				<div>
-					<label
-						className="block text-xs font-medium text-gray-700 mb-0.5 font-mono"
-						htmlFor="description-input"
-					>
-						Description<span className="text-red-500">*</span>
-					</label>
-					<textarea
-						id="description-input"
-						rows={2}
-						value={description}
-						required
-						onChange={(e) => setDescription(e.target.value)}
-						className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-mono shadow-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
-						placeholder="Enter description"
-					></textarea>
-				</div>
-			</form>
-		</BaseModal>
-	);
+  useEffect(() => {
+    if (state?.success) {
+      router.refresh();
+      onClose();
+    }
+  }, [state, onClose, router]);
+
+  return (
+    <BaseModal
+      opened={opened}
+      onClose={onClose}
+      title={initialData ? "Edit Category" : "Add Category"}
+      footer={
+        <div className="flex justify-end gap-2">
+          <Button type="button" variant="ghost" size="sm" onClick={onClose}>Cancel</Button>
+          <Button type="submit" form="category-form" variant="green" size="sm" disabled={isPending}>
+            {isPending ? "Saving..." : initialData ? "Update" : "Create"}
+            <Check className="ml-1" size={14} />
+          </Button>
+        </div>
+      }
+    >
+      <form id="category-form" action={formAction} className="space-y-2" key={opened ? "open" : "closed"}>
+        {initialData && <input type="hidden" name="id" value={initialData.id} />}
+
+        <div>
+          <label className="block text-xs font-medium text-gray-700 mb-0.5 font-mono" htmlFor="name">
+            Category Name<span className="text-red-500">*</span>
+          </label>
+          <input
+            id="name"
+            name="name"
+            type="text"
+            defaultValue={initialData?.name ?? ""}
+            className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-mono shadow-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
+            placeholder="Enter category"
+          />
+          {state?.error?.name && <p className="text-xs text-red-500 mt-1 font-mono">{state.error.name[0]}</p>}
+        </div>
+
+        <div>
+          <label className="block text-xs font-medium text-gray-700 mb-0.5 font-mono" htmlFor="description">
+            Description
+          </label>
+          <textarea
+            id="description"
+            name="description"
+            rows={2}
+            defaultValue={initialData?.description ?? ""}
+            className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-mono shadow-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
+            placeholder="Enter description"
+          />
+        </div>
+      </form>
+    </BaseModal>
+  );
 }
