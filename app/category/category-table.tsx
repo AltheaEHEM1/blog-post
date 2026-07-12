@@ -172,7 +172,7 @@ export default function CategoryTable({ categories }: { categories: Category[] }
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 text-xs">
-              {table.getRowModel().rows.length === 0 && (
+              {table.getRowModel().rows?.length === 0 && (
                 <tr>
                   <td colSpan={4} className="p-6 text-center text-gray-400">No categories yet.</td>
                 </tr>
