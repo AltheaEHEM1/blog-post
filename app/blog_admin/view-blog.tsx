@@ -2,7 +2,7 @@
 
 import { ArrowLeft, Calendar, Tag, User } from "lucide-react";
 import Image from "next/image";
-import type { BlogPost } from "./page";
+import type { BlogPost } from "./blog-admin";
 
 interface ViewBlogProps {
 	data: BlogPost;
@@ -21,31 +21,13 @@ export default function ViewBlog({ data, onBack }: ViewBlogProps) {
 				<ArrowLeft size={14} /> Back to Articles
 			</button>
 
-			{/* Content Wrapper */}
 			<div className="px-7">
-				{data.imageUrl && (
-					<div className="relative w-full overflow-hidden rounded-2xl shadow-lg border border-gray-200/50">
-						<div className="relative aspect-video w-full">
-							<Image
-								src={data.imageUrl}
-								alt={data.title}
-								fill
-								priority
-								className="object-cover transition-transform duration-700 hover:scale-105"
-								sizes="(max-width: 768px) 100vw, 800px"
-							/>
-							<div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
-						</div>
-					</div>
-				)}
 
 				<div className="p-8">
-					{/* Category */}
 					<div className="flex items-center gap-2 text-green-700 bg-green-50 px-3 py-1 rounded-full text-xs font-mono border border-green-200 w-fit">
-						<Tag size={12} /> {data.category || "Uncategorized"}
+						<Tag size={12} /> {data.category?.name ?? "Uncategorized"}
 					</div>
 
-					{/* Title & Metadata Row */}
 					<div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mt-4">
 						<h1 className="text-xl font-mono font-bold text-gray-900 flex-1">
 							{data.title}
@@ -57,7 +39,7 @@ export default function ViewBlog({ data, onBack }: ViewBlogProps) {
 							</div>
 							<div className="flex items-center gap-2">
 								<Calendar size={14} className="text-green-600" />
-								{data.createdAt || "Date unknown"}
+								{new Date(data.createdAt).toLocaleDateString()}
 							</div>
 						</div>
 					</div>
@@ -68,7 +50,6 @@ export default function ViewBlog({ data, onBack }: ViewBlogProps) {
 						</p>
 					)}
 
-					{/* Body */}
 					<div className="mt-8 text-sm prose font-mono prose-green max-w-none text-gray-700 whitespace-pre-wrap leading-relaxed">
 						{data.body || "No content provided."}
 					</div>

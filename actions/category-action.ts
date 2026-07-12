@@ -67,11 +67,6 @@ export async function deleteCategory(id: string) {
   revalidatePath("/category");
 }
 
-export async function restoreCategory(id: string) {
-  await db.update(categories).set({ deletedAt: null }).where(eq(categories.id, id));
-  revalidatePath("/category");
-}
-
 export async function getActiveCategories() {
   return db.select().from(categories).where(isNull(categories.deletedAt)).orderBy(desc(categories.createdAt));
 }
