@@ -11,7 +11,13 @@ interface ViewModalProps {
 	onReject?: (id: string) => void;
 }
 
-export default function ViewModal({ opened, onClose, data, onApprove, onReject }: ViewModalProps) {
+export default function ViewModal({
+	opened,
+	onClose,
+	data,
+	onApprove,
+	onReject,
+}: ViewModalProps) {
 	const handleApprove = () => {
 		if (data && onApprove) onApprove(data.id);
 		onClose();
@@ -70,7 +76,9 @@ export default function ViewModal({ opened, onClose, data, onApprove, onReject }
 					</div>
 					<div className="flex items-center">
 						<span className="font-medium w-32">Status:</span>
-						<span className="capitalize">{data.approved ? "approved" : "pending"}</span>
+						<span className="capitalize">
+							{data.approved ? "approved" : "pending"}
+						</span>
 					</div>
 				</div>
 			) : (

@@ -12,6 +12,7 @@ import {
 import { Eye, Search } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
+import { approveComment, rejectComment } from "@/actions/comment-action";
 import ViewModal from "@/app/comment/view-modal";
 import {
 	Pagination,
@@ -21,7 +22,6 @@ import {
 	PaginationNext,
 	PaginationPrevious,
 } from "@/components/pagination";
-import { approveComment, rejectComment } from "@/actions/comment-action";
 
 export type CommentRow = {
 	id: string;
@@ -32,8 +32,13 @@ export type CommentRow = {
 	blog: { id: string; title: string } | null;
 };
 
-// Filter helper
-const isWithinDate = (row: any, columnId: string, filterValue: string) => {
+import type { Row } from "@tanstack/react-table";
+
+const isWithinDate = (
+	row: Row<CommentRow>,
+	columnId: string,
+	filterValue: string,
+) => {
 	if (!filterValue) return true;
 	const rowDate = new Date(row.getValue(columnId)).toLocaleDateString();
 	const filterDate = new Date(filterValue).toLocaleDateString();
@@ -45,7 +50,9 @@ interface CommentTableProps {
 }
 
 export default function CommentTable({ comments }: CommentTableProps) {
-	const [selectedComment, setSelectedComment] = useState<CommentRow | null>(null);
+	const [selectedComment, setSelectedComment] = useState<CommentRow | null>(
+		null,
+	);
 	const [modalOpen, setModalOpen] = useState(false);
 	const [globalFilter, setGlobalFilter] = useState("");
 	const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([
@@ -92,14 +99,17 @@ export default function CommentTable({ comments }: CommentTableProps) {
 				accessorKey: "createdAt",
 				header: "Created At",
 				filterFn: isWithinDate,
-				cell: ({ row }) => new Date(row.original.createdAt).toLocaleDateString(),
+				cell: ({ row }) =>
+					new Date(row.original.createdAt).toLocaleDateString(),
 			},
 			{
 				id: "status",
 				header: "Status",
 				accessorFn: (row) => (row.approved ? "approved" : "pending"),
 				cell: ({ row }) => (
-					<span className="capitalize">{row.original.approved ? "approved" : "pending"}</span>
+					<span className="capitalize">
+						{row.original.approved ? "approved" : "pending"}
+					</span>
 				),
 			},
 			{
@@ -151,11 +161,19 @@ export default function CommentTable({ comments }: CommentTableProps) {
 					</div>
 
 					<div className="flex items-center gap-2">
-						<label className="text-xs font-mono text-gray-500">Filter Date:</label>
+						<label
+							htmlFor="filterDate"
+							className="text-xs font-mono text-gray-500"
+						>
+							Filter Date:
+						</label>
 						<input
+							id="filterDate"
 							type="date"
 							className="h-8 px-2 text-xs rounded-md border border-gray-200 outline-none focus:ring-1 focus:ring-green-400"
-							onChange={(e) => table.getColumn("createdAt")?.setFilterValue(e.target.value)}
+							onChange={(e) =>
+								table.getColumn("createdAt")?.setFilterValue(e.target.value)
+							}
 						/>
 					</div>
 				</div>
@@ -164,20 +182,22 @@ export default function CommentTable({ comments }: CommentTableProps) {
 					<button
 						type="button"
 						onClick={() => setActiveTab("pending")}
-						className={`px-4 py-1.5 text-xs rounded-t-md font-medium transition-all ${activeTab === "pending"
-							? "bg-green-700 text-white"
-							: "bg-green-50 text-green-700 border"
-							}`}
+						className={`px-4 py-1.5 text-xs rounded-t-md font-medium transition-all ${
+							activeTab === "pending"
+								? "bg-green-700 text-white"
+								: "bg-green-50 text-green-700 border"
+						}`}
 					>
 						For Approval
 					</button>
 					<button
 						type="button"
 						onClick={() => setActiveTab("approved")}
-						className={`px-4 py-1.5 text-xs rounded-t-md font-medium transition-all ${activeTab === "approved"
-							? "bg-green-700 text-white"
-							: "bg-green-50 text-green-700 border"
-							}`}
+						className={`px-4 py-1.5 text-xs rounded-t-md font-medium transition-all ${
+							activeTab === "approved"
+								? "bg-green-700 text-white"
+								: "bg-green-50 text-green-700 border"
+						}`}
 					>
 						Approved
 					</button>
@@ -190,7 +210,10 @@ export default function CommentTable({ comments }: CommentTableProps) {
 								<tr key={headerGroup.id}>
 									{headerGroup.headers.map((header) => (
 										<th key={header.id} className="p-3 text-green-800 border-b">
-											{flexRender(header.column.columnDef.header, header.getContext())}
+											{flexRender(
+												header.column.columnDef.header,
+												header.getContext(),
+											)}
 										</th>
 									))}
 								</tr>
@@ -208,7 +231,10 @@ export default function CommentTable({ comments }: CommentTableProps) {
 								<tr key={row.id} className="bg-green-50 hover:bg-green-100">
 									{row.getVisibleCells().map((cell) => (
 										<td key={cell.id} className="p-3 text-gray-600">
-											{flexRender(cell.column.columnDef.cell, cell.getContext())}
+											{flexRender(
+												cell.column.columnDef.cell,
+												cell.getContext(),
+											)}
 										</td>
 									))}
 								</tr>
@@ -225,14 +251,17 @@ export default function CommentTable({ comments }: CommentTableProps) {
 								onClick={() => table.previousPage()}
 								disabled={!table.getCanPreviousPage()}
 							/>
-							{Array.from({ length: table.getPageCount() }).map((_, i) => (
-								<PaginationItem key={`page-${i + 1}`}>
+							{Array.from(
+								{ length: table.getPageCount() },
+								(_, i) => i + 1,
+							).map((page) => (
+								<PaginationItem key={page}>
 									<PaginationLink
 										size="xs"
-										isActive={i === pagination.pageIndex}
-										onClick={() => table.setPageIndex(i)}
+										isActive={page - 1 === pagination.pageIndex}
+										onClick={() => table.setPageIndex(page - 1)}
 									>
-										{i + 1}
+										{page}
 									</PaginationLink>
 								</PaginationItem>
 							))}

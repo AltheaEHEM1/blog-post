@@ -24,17 +24,16 @@ export default async function Blog({
 				<h1 className="text-4xl font-bold mb-6">Blog Posts</h1>
 
 				<div className="flex flex-wrap gap-2 mb-12">
-					
-            <a
-              href="/blog"
-              className={`text-xs font-mono px-3 py-1 rounded-full border transition-colors ${
-                !category
-                  ? "bg-cyan-600 text-white border-cyan-600"
-                  : "border-slate-300 dark:border-slate-700 text-slate-500 hover:border-cyan-500 hover:text-cyan-600"
-              }`}
-            >
-              All
-            </a>
+					<a
+						href="/blog"
+						className={`text-xs font-mono px-3 py-1 rounded-full border transition-colors ${
+							!category
+								? "bg-cyan-600 text-white border-cyan-600"
+								: "border-slate-300 dark:border-slate-700 text-slate-500 hover:border-cyan-500 hover:text-cyan-600"
+						}`}
+					>
+						All
+					</a>
 					{categories.map((cat) => (
 						<a
 							key={cat.id}
@@ -51,7 +50,7 @@ export default async function Blog({
 				</div>
 
 				<BlogPostsGrid blogPosts={posts} />
-			</section >
-		</main >
+			</section>
+		</main>
 	);
 }

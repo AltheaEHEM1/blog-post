@@ -3,8 +3,8 @@
 import { ArrowLeft } from "lucide-react";
 import { useActionState, useEffect } from "react";
 import { toast } from "sonner";
-import { Button } from "@/components/button/button";
 import { createBlog, updateBlog } from "@/actions/blog-action";
+import { Button } from "@/components/button/button";
 import type { BlogPost, Category } from "./blog-admin";
 
 interface BlogFormProps {
@@ -14,14 +14,21 @@ interface BlogFormProps {
 	onCancel: () => void;
 }
 
-export default function BlogForm({ initialData, categories, onDone, onCancel }: BlogFormProps) {
+export default function BlogForm({
+	initialData,
+	categories,
+	onDone,
+	onCancel,
+}: BlogFormProps) {
 	const action = initialData ? updateBlog : createBlog;
 	const [state, formAction, isPending] = useActionState(action, null);
 
 	useEffect(() => {
 		if (state?.success) {
 			toast.success(
-				initialData ? "Blog post updated successfully" : "Blog post published successfully"
+				initialData
+					? "Blog post updated successfully"
+					: "Blog post published successfully",
 			);
 			onDone();
 		} else if (state?.error) {
@@ -29,7 +36,7 @@ export default function BlogForm({ initialData, categories, onDone, onCancel }: 
 			if (firstError) toast.error(firstError as string);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [state]);
+	}, [state, onDone, initialData]);
 
 	return (
 		<div className="flex flex-col h-full overflow-auto pb-8">
@@ -43,7 +50,9 @@ export default function BlogForm({ initialData, categories, onDone, onCancel }: 
 
 			<div className="px-7">
 				<form action={formAction} className="space-y-6">
-					{initialData && <input type="hidden" name="id" value={initialData.id} />}
+					{initialData && (
+						<input type="hidden" name="id" value={initialData.id} />
+					)}
 
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-2">
 						<div className="flex flex-col">
@@ -62,7 +71,9 @@ export default function BlogForm({ initialData, categories, onDone, onCancel }: 
 								placeholder="Enter title"
 							/>
 							{state?.error?.title && (
-								<p className="text-xs text-red-500 mt-1 font-mono">{state.error.title[0]}</p>
+								<p className="text-xs text-red-500 mt-1 font-mono">
+									{state.error.title[0]}
+								</p>
 							)}
 						</div>
 
@@ -101,7 +112,9 @@ export default function BlogForm({ initialData, categories, onDone, onCancel }: 
 								placeholder="Writer's name..."
 							/>
 							{state?.error?.authorName && (
-								<p className="text-xs text-red-500 mt-1 font-mono">{state.error.authorName[0]}</p>
+								<p className="text-xs text-red-500 mt-1 font-mono">
+									{state.error.authorName[0]}
+								</p>
 							)}
 						</div>
 
@@ -126,7 +139,9 @@ export default function BlogForm({ initialData, categories, onDone, onCancel }: 
 								))}
 							</select>
 							{state?.error?.categoryId && (
-								<p className="text-xs text-red-500 mt-1 font-mono">{state.error.categoryId[0]}</p>
+								<p className="text-xs text-red-500 mt-1 font-mono">
+									{state.error.categoryId[0]}
+								</p>
 							)}
 						</div>
 					</div>
@@ -147,7 +162,9 @@ export default function BlogForm({ initialData, categories, onDone, onCancel }: 
 							placeholder="Compose your article..."
 						/>
 						{state?.error?.body && (
-							<p className="text-xs text-red-500 mt-1 font-mono">{state.error.body[0]}</p>
+							<p className="text-xs text-red-500 mt-1 font-mono">
+								{state.error.body[0]}
+							</p>
 						)}
 					</div>
 
@@ -160,8 +177,17 @@ export default function BlogForm({ initialData, categories, onDone, onCancel }: 
 						>
 							Cancel
 						</Button>
-						<Button type="submit" variant="green" className="cursor-pointer" disabled={isPending}>
-							{isPending ? "Saving..." : initialData ? "Update Post" : "Publish Post"}
+						<Button
+							type="submit"
+							variant="green"
+							className="cursor-pointer"
+							disabled={isPending}
+						>
+							{isPending
+								? "Saving..."
+								: initialData
+									? "Update Post"
+									: "Publish Post"}
 						</Button>
 					</div>
 				</form>

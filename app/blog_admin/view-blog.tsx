@@ -1,7 +1,6 @@
 "use client";
 
 import { ArrowLeft, Calendar, Tag, User } from "lucide-react";
-import Image from "next/image";
 import type { BlogPost } from "./blog-admin";
 
 interface ViewBlogProps {
@@ -22,7 +21,6 @@ export default function ViewBlog({ data, onBack }: ViewBlogProps) {
 			</button>
 
 			<div className="px-7">
-
 				<div className="p-8">
 					<div className="flex items-center gap-2 text-green-700 bg-green-50 px-3 py-1 rounded-full text-xs font-mono border border-green-200 w-fit">
 						<Tag size={12} /> {data.category?.name ?? "Uncategorized"}

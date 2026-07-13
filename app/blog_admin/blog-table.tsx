@@ -7,6 +7,7 @@ import {
 	getCoreRowModel,
 	getFilteredRowModel,
 	getPaginationRowModel,
+	type Row,
 	useReactTable,
 } from "@tanstack/react-table";
 import { Eye, Pencil, Plus, Search, Trash2 } from "lucide-react";
@@ -34,7 +35,11 @@ import {
 import type { BlogPost } from "./blog-admin";
 
 // Define the filter function outside the component
-const isWithinDate = (row: any, columnId: string, filterValue: string) => {
+const isWithinDate = (
+	row: Row<BlogPost>,
+	columnId: string,
+	filterValue: string,
+) => {
 	if (!filterValue) return true;
 	const rowDate = new Date(row.getValue(columnId)).toLocaleDateString();
 	const filterDate = new Date(filterValue).toLocaleDateString();
@@ -49,7 +54,13 @@ interface BlogTableProps {
 	onDelete: (id: string) => void;
 }
 
-export default function BlogTable({ data, onAdd, onEdit, onView, onDelete }: BlogTableProps) {
+export default function BlogTable({
+	data,
+	onAdd,
+	onEdit,
+	onView,
+	onDelete,
+}: BlogTableProps) {
 	const [globalFilter, setGlobalFilter] = useState("");
 	const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 	const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 });
@@ -66,7 +77,8 @@ export default function BlogTable({ data, onAdd, onEdit, onView, onDelete }: Blo
 				accessorKey: "createdAt",
 				header: "Created At",
 				filterFn: isWithinDate,
-				cell: ({ row }) => new Date(row.original.createdAt).toLocaleDateString(),
+				cell: ({ row }) =>
+					new Date(row.original.createdAt).toLocaleDateString(),
 			},
 			{
 				id: "actions",
@@ -126,7 +138,7 @@ export default function BlogTable({ data, onAdd, onEdit, onView, onDelete }: Blo
 				),
 			},
 		],
-		[onDelete, onEdit, onView]
+		[onDelete, onEdit, onView],
 	);
 
 	const table = useReactTable({
@@ -155,8 +167,14 @@ export default function BlogTable({ data, onAdd, onEdit, onView, onDelete }: Blo
 				</div>
 
 				<div className="flex items-center gap-2">
-					<label className="text-xs font-mono text-gray-500">Filter Date:</label>
+					<label
+						htmlFor="date-filter"
+						className="text-xs font-mono text-gray-500"
+					>
+						Filter Date:
+					</label>
 					<input
+						id="date-filter"
 						type="date"
 						className="h-8 px-2 text-xs rounded-md border border-gray-200 outline-none focus:ring-1 focus:ring-green-400"
 						onChange={(e) => {
@@ -180,7 +198,9 @@ export default function BlogTable({ data, onAdd, onEdit, onView, onDelete }: Blo
 							<th className="p-3 w-1/2 text-green-800 border-b">Title</th>
 							<th className="p-3 w-1/4 text-green-800 border-b">Category</th>
 							<th className="p-3 w-1/6 text-green-800 border-b">Created At</th>
-							<th className="p-3 w-1/12 text-green-800 border-b text-center">Actions</th>
+							<th className="p-3 w-1/12 text-green-800 border-b text-center">
+								Actions
+							</th>
 						</tr>
 					</thead>
 					<tbody className="divide-y divide-gray-100 text-xs">
@@ -192,7 +212,10 @@ export default function BlogTable({ data, onAdd, onEdit, onView, onDelete }: Blo
 							</tr>
 						)}
 						{table.getRowModel().rows.map((row) => (
-							<tr key={row.id} className="bg-green-50 hover:bg-green-100 transition-colors">
+							<tr
+								key={row.id}
+								className="bg-green-50 hover:bg-green-100 transition-colors"
+							>
 								{row.getVisibleCells().map((cell) => (
 									<td key={cell.id} className="p-3 text-gray-600 truncate">
 										{flexRender(cell.column.columnDef.cell, cell.getContext())}

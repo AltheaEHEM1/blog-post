@@ -1,5 +1,5 @@
-import { PageHeader } from "@/components/page-header/page-header";
 import { getAllComments } from "@/actions/comment-action";
+import { PageHeader } from "@/components/page-header/page-header";
 import CommentTable from "./comment-table";
 
 export default async function Comment() {

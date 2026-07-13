@@ -41,14 +41,21 @@ export default function SidebarHeader({
 						aria-label="Breadcrumb"
 						className="hidden sm:flex items-center text-xs text-slate-600 uppercase tracking-wide"
 					>
-						<Link href={blogHref} className="hover:text-black transition-colors">
+						<Link
+							href={blogHref}
+							className="hover:text-black transition-colors"
+						>
 							Blog
 						</Link>
 					</nav>
 				</div>
 
 				<div className="flex items-center not-odd:text-xs">
-					<UserChipDropdown onLogout={handleLogout} noBackground hideLabelsOnMobile>
+					<UserChipDropdown
+						onLogout={handleLogout}
+						noBackground
+						hideLabelsOnMobile
+					>
 						<span>Blog Admin</span>
 					</UserChipDropdown>
 				</div>
