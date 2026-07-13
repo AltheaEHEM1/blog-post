@@ -60,6 +60,21 @@ export default function CategoryTable({ categories }: { categories: Category[] }
     }
   };
 
+  const handleAdd = () => {
+    setEditCategory(null);
+    setModalOpen(true);
+  };
+
+  const handleEdit = (category: Category) => {
+    setEditCategory(category);
+    setModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
+    setEditCategory(null);
+  };
+
   const columns = useMemo<ColumnDef<Category>[]>(
     () => [
       { accessorKey: "name", header: "Category" },
@@ -87,10 +102,7 @@ export default function CategoryTable({ categories }: { categories: Category[] }
             <button
               type="button"
               className="text-yellow-600 hover:scale-110 transition-transform"
-              onClick={() => {
-                setEditCategory(row.original);
-                setModalOpen(true);
-              }}
+              onClick={() => handleEdit(row.original)}
             >
               <Pencil size={15} />
             </button>
@@ -153,15 +165,7 @@ export default function CategoryTable({ categories }: { categories: Category[] }
           </div>
 
           <div className="ml-auto">
-            <Button
-              type="button"
-              variant="green"
-              size="sm"
-              onClick={() => {
-                setEditCategory(null);
-                setModalOpen(true);
-              }}
-            >
+            <Button type="button" variant="green" size="sm" onClick={handleAdd}>
               <Plus size={18} /> Add Category
             </Button>
           </div>
@@ -221,8 +225,9 @@ export default function CategoryTable({ categories }: { categories: Category[] }
       </div>
 
       <FormModal
+        key={modalOpen ? (editCategory?.id ?? "new") : "closed"}
         opened={modalOpen}
-        onClose={() => setModalOpen(false)}
+        onClose={handleCloseModal}
         initialData={editCategory ?? undefined}
       />
       <ViewModal opened={viewOpen} onClose={() => setViewOpen(false)} data={viewCategory} />

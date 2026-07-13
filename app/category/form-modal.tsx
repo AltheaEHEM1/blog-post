@@ -2,7 +2,6 @@
 
 import { Check } from "lucide-react";
 import { useActionState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Button } from "@/components/button/button";
 import BaseModal from "@/components/layout/BaseModal";
@@ -17,21 +16,20 @@ interface FormModalProps {
 export default function FormModal({ opened, onClose, initialData }: FormModalProps) {
   const action = initialData ? updateCategory : createCategory;
   const [state, formAction, isPending] = useActionState(action, null);
-  const router = useRouter();
 
   useEffect(() => {
     if (state?.success) {
       toast.success(
         initialData ? "Category updated successfully" : "Category created successfully"
       );
-      router.refresh();
       onClose();
     } else if (state?.error) {
       // catch-all errors (e.g. duplicate name) that aren't tied to a single field
       const firstError = Object.values(state.error).flat()[0];
       if (firstError) toast.error(firstError as string);
     }
-  }, [state, onClose, router, initialData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state]);
 
   return (
     <BaseModal
@@ -48,7 +46,7 @@ export default function FormModal({ opened, onClose, initialData }: FormModalPro
         </div>
       }
     >
-      <form id="category-form" action={formAction} className="space-y-2" key={opened ? "open" : "closed"}>
+      <form id="category-form" action={formAction} className="space-y-2">
         {initialData && <input type="hidden" name="id" value={initialData.id} />}
 
         <div>

@@ -28,6 +28,7 @@ export default function CommentSection({ blogId, initialComments }: CommentSecti
             const firstError = Object.values(state.error).flat()[0];
             if (firstError) toast.error(firstError as string);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [state]);
 
     return (
@@ -70,12 +71,6 @@ export default function CommentSection({ blogId, initialComments }: CommentSecti
             <h3 className="text-sm font-mono uppercase tracking-wider text-slate-500 mb-4">
                 Leave a comment
             </h3>
-
-            {state?.success && (
-                <p className="text-sm font-mono text-cyan-600 mb-4">
-                    Thanks — your comment is awaiting approval and will appear once reviewed.
-                </p>
-            )}
 
             <form ref={formRef} action={formAction} className="space-y-4">
                 <input type="hidden" name="blogId" value={blogId} />

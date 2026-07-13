@@ -1,7 +1,7 @@
 "use client";
 
-import { ArrowLeft, X } from "lucide-react";
-import { type ChangeEvent, useActionState, useEffect, useState } from "react";
+import { ArrowLeft } from "lucide-react";
+import { useActionState, useEffect } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/button/button";
 import { createBlog, updateBlog } from "@/actions/blog-action";
@@ -28,7 +28,8 @@ export default function BlogForm({ initialData, categories, onDone, onCancel }: 
 			const firstError = Object.values(state.error).flat()[0];
 			if (firstError) toast.error(firstError as string);
 		}
-	}, [state, onDone, initialData]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [state]);
 
 	return (
 		<div className="flex flex-col h-full overflow-auto pb-8">

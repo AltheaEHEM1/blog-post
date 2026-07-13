@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import { toast } from "sonner";
 import { PageHeader } from "@/components/page-header/page-header";
 import BlogForm from "./blog-form";
 import BlogTable from "./blog-table";
 import ViewBlog from "./view-blog";
 import { deleteBlog } from "@/actions/blog-action";
-import { toast } from "sonner";
 
 export interface BlogPost {
     id: string;
@@ -110,6 +110,7 @@ export default function BlogAdmin({ initialBlogs, categories }: BlogAdminProps) 
                 )}
                 {(view === "add" || view === "edit") && (
                     <BlogForm
+                        key={selectedBlog?.id ?? "new"}
                         initialData={selectedBlog || undefined}
                         categories={categories}
                         onDone={handleFormDone}
