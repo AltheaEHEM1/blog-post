@@ -1,19 +1,26 @@
-"use client";
-
 import Link from "next/link";
-import { use } from "react";
+import { notFound } from "next/navigation";
+import { getBlogBySlug } from "@/actions/blog-action";
+import { getApprovedComments } from "@/actions/comment-action";
+import CommentSection from "./comment";
 
-export default function IndividualBlog({
+export default async function IndividualBlog({
 	params,
 }: {
 	params: Promise<{ slug: string }>;
 }) {
-	const { slug } = use(params);
+	const { slug } = await params;
+	const post = await getBlogBySlug(slug);
+
+	if (!post) {
+		notFound();
+	}
+
+	const comments = await getApprovedComments(post.id);
 
 	return (
 		<main className="min-h-screen transition-colors duration-300">
 			<article className="max-w-5xl mx-auto px-6 py-10">
-				{/* Back Link */}
 				<div className="mb-12">
 					<Link
 						href="/blog"
@@ -23,14 +30,34 @@ export default function IndividualBlog({
 					</Link>
 				</div>
 
-				{/* Content Area */}
-				<h1 className="text-3xl md:text-3xl font-bold mb-8 text-slate-900 dark:text-white">
-					Hello
+				<div className="mb-4 text-xs font-semibold tracking-wider uppercase text-cyan-600 dark:text-cyan-500">
+					{post.category?.name ?? "Uncategorized"} •{" "}
+					{new Date(post.createdAt).toLocaleDateString("en-US", {
+						year: "numeric",
+						month: "long",
+						day: "numeric",
+					})}
+				</div>
+
+				<h1 className="text-3xl md:text-3xl font-bold mb-2 text-slate-900 dark:text-white">
+					{post.title}
 				</h1>
 
-				<div className="prose dark:prose-invert font-mono prose-slate prose-lg max-w-none text-justify">
-					<p>Displaying content for slug: {slug}</p>
+				{post.subtitle && (
+					<p className="text-slate-500 dark:text-slate-400 italic mb-8 font-mono text-sm">
+						{post.subtitle}
+					</p>
+				)}
+
+				<p className="text-xs font-mono text-slate-500 mb-8">
+					By {post.authorName}
+				</p>
+
+				<div className="prose dark:prose-invert font-mono prose-slate prose-lg max-w-none text-justify whitespace-pre-wrap">
+					{post.body}
 				</div>
+
+				<CommentSection blogId={post.id} initialComments={comments} />
 			</article>
 		</main>
 	);
