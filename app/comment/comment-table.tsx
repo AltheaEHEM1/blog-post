@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/incompatible-library */
 "use client";
 
 import {
@@ -21,54 +20,24 @@ import {
 	PaginationNext,
 	PaginationPrevious,
 } from "@/components/pagination";
+import { approveComment, rejectComment } from "@/actions/comment-action";
 
-type BlogPost = {
+export type CommentRow = {
 	id: string;
-	username: string;
-	blogtitle: string;
-	comment: string;
-	createdAt: string;
-	status: "pending" | "approved";
+	authorName: string;
+	body: string;
+	approved: boolean;
+	createdAt: Date;
+	blog: { id: string; title: string } | null;
 };
 
-export default function BlogTable() {
-	const [selectedComment, setSelectedComment] = useState<BlogPost | null>(null);
-	const [modalOpen, setModalOpen] = useState(false);
-	const [data] = useState<BlogPost[]>([
-		{
-			id: "1",
-			username: "John Doe",
-			blogtitle: "Getting Started with Next.js",
-			comment: "Great post!",
-			createdAt: "2026-07-01",
-			status: "pending",
-		},
-		{
-			id: "2",
-			username: "Jane Smith",
-			blogtitle: "Advanced React Patterns",
-			comment: "Excellent insights!",
-			createdAt: "2026-07-02",
-			status: "approved",
-		},
-		{
-			id: "3",
-			username: "Mike Johnson",
-			blogtitle: "Understanding TypeScript",
-			comment: "Very informative!",
-			createdAt: "2026-07-03",
-			status: "pending",
-		},
-		{
-			id: "4",
-			username: "Sarah Williams",
-			blogtitle: "Design Systems in 2026",
-			comment: "Love the examples!",
-			createdAt: "2026-07-04",
-			status: "approved",
-		},
-	]);
+interface CommentTableProps {
+	comments: CommentRow[];
+}
 
+export default function CommentTable({ comments }: CommentTableProps) {
+	const [selectedComment, setSelectedComment] = useState<CommentRow | null>(null);
+	const [modalOpen, setModalOpen] = useState(false);
 	const [globalFilter, setGlobalFilter] = useState("");
 	const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([
 		{ id: "status", value: "pending" },
@@ -80,13 +49,36 @@ export default function BlogTable() {
 		setColumnFilters([{ id: "status", value: activeTab }]);
 	}, [activeTab]);
 
-	const columns = useMemo<ColumnDef<BlogPost>[]>(
+	const handleApprove = async (id: string) => {
+		await approveComment(id);
+	};
+
+	const handleReject = async (id: string) => {
+		await rejectComment(id);
+	};
+
+	const columns = useMemo<ColumnDef<CommentRow>[]>(
 		() => [
-			{ accessorKey: "username", header: "Username" },
-			{ accessorKey: "blogtitle", header: "Blog Title" },
-			{ accessorKey: "comment", header: "Comment" },
-			{ accessorKey: "createdAt", header: "Created At" },
-			{ accessorKey: "status", header: "Status" },
+			{ accessorKey: "authorName", header: "Username" },
+			{
+				id: "blogtitle",
+				header: "Blog Title",
+				accessorFn: (row) => row.blog?.title ?? "Untitled",
+			},
+			{ accessorKey: "body", header: "Comment" },
+			{
+				accessorKey: "createdAt",
+				header: "Created At",
+				cell: ({ row }) => new Date(row.original.createdAt).toLocaleDateString(),
+			},
+			{
+				id: "status",
+				header: "Status",
+				accessorFn: (row) => (row.approved ? "approved" : "pending"),
+				cell: ({ row }) => (
+					<span className="capitalize">{row.original.approved ? "approved" : "pending"}</span>
+				),
+			},
 			{
 				id: "actions",
 				header: () => <div className="text-center">Actions</div>,
@@ -110,7 +102,7 @@ export default function BlogTable() {
 	);
 
 	const table = useReactTable({
-		data,
+		data: comments,
 		columns,
 		state: { globalFilter, pagination, columnFilters },
 		onGlobalFilterChange: setGlobalFilter,
@@ -126,7 +118,7 @@ export default function BlogTable() {
 			<div className="flex flex-col h-full overflow-hidden">
 				<div className="flex flex-wrap gap-2 items-center mb-4 shrink-0">
 					<input
-						placeholder="Search posts..."
+						placeholder="Search comments..."
 						value={globalFilter ?? ""}
 						onChange={(e) => setGlobalFilter(e.target.value)}
 						className="h-8 w-48 pl-3 text-xs rounded-md border border-gray-200 outline-none"
@@ -137,22 +129,20 @@ export default function BlogTable() {
 					<button
 						type="button"
 						onClick={() => setActiveTab("pending")}
-						className={`px-4 py-1.5 text-xs rounded-t-md font-medium transition-all ${
-							activeTab === "pending"
+						className={`px-4 py-1.5 text-xs rounded-t-md font-medium transition-all ${activeTab === "pending"
 								? "bg-green-700 text-white"
 								: "bg-green-50 text-green-700 border"
-						}`}
+							}`}
 					>
 						For Approval
 					</button>
 					<button
 						type="button"
 						onClick={() => setActiveTab("approved")}
-						className={`px-4 py-1.5 text-xs rounded-t-md font-medium transition-all ${
-							activeTab === "approved"
+						className={`px-4 py-1.5 text-xs rounded-t-md font-medium transition-all ${activeTab === "approved"
 								? "bg-green-700 text-white"
 								: "bg-green-50 text-green-700 border"
-						}`}
+							}`}
 					>
 						Approved
 					</button>
@@ -165,24 +155,25 @@ export default function BlogTable() {
 								<tr key={headerGroup.id}>
 									{headerGroup.headers.map((header) => (
 										<th key={header.id} className="p-3 text-green-800 border-b">
-											{flexRender(
-												header.column.columnDef.header,
-												header.getContext(),
-											)}
+											{flexRender(header.column.columnDef.header, header.getContext())}
 										</th>
 									))}
 								</tr>
 							))}
 						</thead>
 						<tbody className="divide-y divide-gray-100 text-xs">
+							{table.getRowModel().rows.length === 0 && (
+								<tr>
+									<td colSpan={6} className="p-6 text-center text-gray-400">
+										No comments in this view.
+									</td>
+								</tr>
+							)}
 							{table.getRowModel().rows.map((row) => (
 								<tr key={row.id} className="bg-green-50 hover:bg-green-100">
 									{row.getVisibleCells().map((cell) => (
 										<td key={cell.id} className="p-3 text-gray-600">
-											{flexRender(
-												cell.column.columnDef.cell,
-												cell.getContext(),
-											)}
+											{flexRender(cell.column.columnDef.cell, cell.getContext())}
 										</td>
 									))}
 								</tr>
@@ -200,8 +191,7 @@ export default function BlogTable() {
 								disabled={!table.getCanPreviousPage()}
 							/>
 							{Array.from({ length: table.getPageCount() }).map((_, i) => (
-								// biome-ignore lint/suspicious/noArrayIndexKey: Page numbers are stable in this pagination context
-								<PaginationItem key={i + 1}>
+								<PaginationItem key={`page-${i + 1}`}>
 									<PaginationLink
 										size="xs"
 										isActive={i === pagination.pageIndex}
@@ -220,12 +210,13 @@ export default function BlogTable() {
 					</Pagination>
 				</div>
 			</div>
+
 			<ViewModal
 				opened={modalOpen}
 				onClose={() => setModalOpen(false)}
 				data={selectedComment}
-				onApprove={(id) => console.log("Approved", id)}
-				onReject={(id) => console.log("Rejected", id)}
+				onApprove={handleApprove}
+				onReject={handleReject}
 			/>
 		</>
 	);

@@ -1,7 +1,10 @@
 import { PageHeader } from "@/components/page-header/page-header";
+import { getAllComments } from "@/actions/comment-action";
 import CommentTable from "./comment-table";
 
-function Comment() {
+export default async function Comment() {
+	const allComments = await getAllComments();
+
 	return (
 		<>
 			<PageHeader
@@ -10,9 +13,7 @@ function Comment() {
 				area="Moderation"
 				showArea={true}
 			/>
-			<CommentTable />
+			<CommentTable comments={allComments} />
 		</>
 	);
 }
-
-export default Comment;
