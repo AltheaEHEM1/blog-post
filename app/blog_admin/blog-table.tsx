@@ -33,6 +33,14 @@ import {
 } from "@/components/pagination";
 import type { BlogPost } from "./blog-admin";
 
+// Define the filter function outside the component
+const isWithinDate = (row: any, columnId: string, filterValue: string) => {
+	if (!filterValue) return true;
+	const rowDate = new Date(row.getValue(columnId)).toLocaleDateString();
+	const filterDate = new Date(filterValue).toLocaleDateString();
+	return rowDate === filterDate;
+};
+
 interface BlogTableProps {
 	data: BlogPost[];
 	onAdd: () => void;
@@ -57,6 +65,7 @@ export default function BlogTable({ data, onAdd, onEdit, onView, onDelete }: Blo
 			{
 				accessorKey: "createdAt",
 				header: "Created At",
+				filterFn: isWithinDate,
 				cell: ({ row }) => new Date(row.original.createdAt).toLocaleDateString(),
 			},
 			{
@@ -117,7 +126,7 @@ export default function BlogTable({ data, onAdd, onEdit, onView, onDelete }: Blo
 				),
 			},
 		],
-		[onDelete, onEdit, onView],
+		[onDelete, onEdit, onView]
 	);
 
 	const table = useReactTable({
@@ -145,6 +154,18 @@ export default function BlogTable({ data, onAdd, onEdit, onView, onDelete }: Blo
 					/>
 				</div>
 
+				<div className="flex items-center gap-2">
+					<label className="text-xs font-mono text-gray-500">Filter Date:</label>
+					<input
+						type="date"
+						className="h-8 px-2 text-xs rounded-md border border-gray-200 outline-none focus:ring-1 focus:ring-green-400"
+						onChange={(e) => {
+							const val = e.target.value;
+							table.getColumn("createdAt")?.setFilterValue(val);
+						}}
+					/>
+				</div>
+
 				<div className="ml-auto">
 					<Button type="button" variant="green" size="sm" onClick={onAdd}>
 						<Plus size={18} /> Add Post
@@ -166,7 +187,7 @@ export default function BlogTable({ data, onAdd, onEdit, onView, onDelete }: Blo
 						{table.getRowModel().rows.length === 0 && (
 							<tr>
 								<td colSpan={4} className="p-6 text-center text-gray-400">
-									No blog posts yet.
+									No blog posts found.
 								</td>
 							</tr>
 						)}

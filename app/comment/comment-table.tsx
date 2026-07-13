@@ -9,7 +9,7 @@ import {
 	getPaginationRowModel,
 	useReactTable,
 } from "@tanstack/react-table";
-import { Eye } from "lucide-react";
+import { Eye, Search } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import ViewModal from "@/app/comment/view-modal";
@@ -32,6 +32,14 @@ export type CommentRow = {
 	blog: { id: string; title: string } | null;
 };
 
+// Filter helper
+const isWithinDate = (row: any, columnId: string, filterValue: string) => {
+	if (!filterValue) return true;
+	const rowDate = new Date(row.getValue(columnId)).toLocaleDateString();
+	const filterDate = new Date(filterValue).toLocaleDateString();
+	return rowDate === filterDate;
+};
+
 interface CommentTableProps {
 	comments: CommentRow[];
 }
@@ -47,7 +55,10 @@ export default function CommentTable({ comments }: CommentTableProps) {
 	const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 });
 
 	useEffect(() => {
-		setColumnFilters([{ id: "status", value: activeTab }]);
+		setColumnFilters((prev) => [
+			...prev.filter((f) => f.id !== "status"),
+			{ id: "status", value: activeTab },
+		]);
 	}, [activeTab]);
 
 	const handleApprove = async (id: string) => {
@@ -80,6 +91,7 @@ export default function CommentTable({ comments }: CommentTableProps) {
 			{
 				accessorKey: "createdAt",
 				header: "Created At",
+				filterFn: isWithinDate,
 				cell: ({ row }) => new Date(row.original.createdAt).toLocaleDateString(),
 			},
 			{
@@ -127,13 +139,25 @@ export default function CommentTable({ comments }: CommentTableProps) {
 	return (
 		<>
 			<div className="flex flex-col h-full overflow-hidden">
-				<div className="flex flex-wrap gap-2 items-center mb-4 shrink-0">
-					<input
-						placeholder="Search comments..."
-						value={globalFilter ?? ""}
-						onChange={(e) => setGlobalFilter(e.target.value)}
-						className="h-8 w-48 pl-3 text-xs rounded-md border border-gray-200 outline-none"
-					/>
+				<div className="flex flex-wrap gap-4 items-center mb-4 shrink-0">
+					<div className="relative flex items-center">
+						<Search className="absolute left-2.5 text-gray-400" size={14} />
+						<input
+							placeholder="Search comments..."
+							value={globalFilter ?? ""}
+							onChange={(e) => setGlobalFilter(e.target.value)}
+							className="h-8 w-48 pl-8 pr-3 text-xs rounded-md border border-gray-200 outline-none"
+						/>
+					</div>
+
+					<div className="flex items-center gap-2">
+						<label className="text-xs font-mono text-gray-500">Filter Date:</label>
+						<input
+							type="date"
+							className="h-8 px-2 text-xs rounded-md border border-gray-200 outline-none focus:ring-1 focus:ring-green-400"
+							onChange={(e) => table.getColumn("createdAt")?.setFilterValue(e.target.value)}
+						/>
+					</div>
 				</div>
 
 				<div className="flex gap-1">
