@@ -1,8 +1,8 @@
 "use client";
 
-import { ArrowLeft, ImageIcon, X } from "lucide-react";
-import Image from "next/image";
+import { ArrowLeft, X } from "lucide-react";
 import { type ChangeEvent, useActionState, useEffect, useState } from "react";
+import { toast } from "sonner";
 import { Button } from "@/components/button/button";
 import { createBlog, updateBlog } from "@/actions/blog-action";
 import type { BlogPost, Category } from "./blog-admin";
@@ -20,9 +20,15 @@ export default function BlogForm({ initialData, categories, onDone, onCancel }: 
 
 	useEffect(() => {
 		if (state?.success) {
+			toast.success(
+				initialData ? "Blog post updated successfully" : "Blog post published successfully"
+			);
 			onDone();
+		} else if (state?.error) {
+			const firstError = Object.values(state.error).flat()[0];
+			if (firstError) toast.error(firstError as string);
 		}
-	}, [state, onDone]);
+	}, [state, onDone, initialData]);
 
 	return (
 		<div className="flex flex-col h-full overflow-auto pb-8">

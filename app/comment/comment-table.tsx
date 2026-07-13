@@ -11,6 +11,7 @@ import {
 } from "@tanstack/react-table";
 import { Eye } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
 import ViewModal from "@/app/comment/view-modal";
 import {
 	Pagination,
@@ -50,11 +51,21 @@ export default function CommentTable({ comments }: CommentTableProps) {
 	}, [activeTab]);
 
 	const handleApprove = async (id: string) => {
-		await approveComment(id);
+		try {
+			await approveComment(id);
+			toast.success("Comment approved and is now visible on the blog");
+		} catch {
+			toast.error("Failed to approve comment");
+		}
 	};
 
 	const handleReject = async (id: string) => {
-		await rejectComment(id);
+		try {
+			await rejectComment(id);
+			toast.success("Comment rejected and removed");
+		} catch {
+			toast.error("Failed to reject comment");
+		}
 	};
 
 	const columns = useMemo<ColumnDef<CommentRow>[]>(
@@ -130,8 +141,8 @@ export default function CommentTable({ comments }: CommentTableProps) {
 						type="button"
 						onClick={() => setActiveTab("pending")}
 						className={`px-4 py-1.5 text-xs rounded-t-md font-medium transition-all ${activeTab === "pending"
-								? "bg-green-700 text-white"
-								: "bg-green-50 text-green-700 border"
+							? "bg-green-700 text-white"
+							: "bg-green-50 text-green-700 border"
 							}`}
 					>
 						For Approval
@@ -140,8 +151,8 @@ export default function CommentTable({ comments }: CommentTableProps) {
 						type="button"
 						onClick={() => setActiveTab("approved")}
 						className={`px-4 py-1.5 text-xs rounded-t-md font-medium transition-all ${activeTab === "approved"
-								? "bg-green-700 text-white"
-								: "bg-green-50 text-green-700 border"
+							? "bg-green-700 text-white"
+							: "bg-green-50 text-green-700 border"
 							}`}
 					>
 						Approved

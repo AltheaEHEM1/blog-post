@@ -6,6 +6,7 @@ import BlogForm from "./blog-form";
 import BlogTable from "./blog-table";
 import ViewBlog from "./view-blog";
 import { deleteBlog } from "@/actions/blog-action";
+import { toast } from "sonner";
 
 export interface BlogPost {
     id: string;
@@ -48,7 +49,12 @@ export default function BlogAdmin({ initialBlogs, categories }: BlogAdminProps) 
     };
 
     const handleDelete = async (id: string) => {
-        await deleteBlog(id);
+        try {
+            await deleteBlog(id);
+            toast.success("Blog post moved to trash");
+        } catch {
+            toast.error("Failed to delete blog post");
+        }
     };
 
     const handleFormDone = () => {

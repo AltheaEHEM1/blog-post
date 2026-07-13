@@ -21,7 +21,7 @@ const BlogPostsGrid = ({ blogPosts }: { blogPosts: Post[] }) => {
 	if (blogPosts.length === 0) {
 		return (
 			<p className="text-slate-500 font-mono text-sm">
-				No blog posts published yet.
+				No blog posts match this filter.
 			</p>
 		);
 	}
