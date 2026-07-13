@@ -54,7 +54,7 @@ export default function BlogAdmin({
 	const handleDelete = async (id: string) => {
 		try {
 			await deleteBlog(id);
-			toast.success("Blog post moved to trash");
+			toast.success("Blog post is deleted");
 		} catch {
 			toast.error("Failed to delete blog post");
 		}

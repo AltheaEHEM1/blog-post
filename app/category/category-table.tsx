@@ -135,7 +135,7 @@ export default function CategoryTable({
 										Confirm Deletion
 									</AlertDialogTitle>
 									<AlertDialogDescription className="font-mono text-sm">
-										This moves the category to trash. You can restore it later.
+										This action cannot be undone. This will permanently deleted.
 									</AlertDialogDescription>
 								</AlertDialogHeader>
 								<AlertDialogFooter>

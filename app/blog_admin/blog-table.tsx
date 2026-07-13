@@ -116,7 +116,8 @@ export default function BlogTable({
 										Confirm Deletion
 									</AlertDialogTitle>
 									<AlertDialogDescription className="font-mono text-sm">
-										This moves the post to trash. You can restore it later.
+										This action cannot be undone. This will permanently delete the post 
+    and all associated comments.
 									</AlertDialogDescription>
 								</AlertDialogHeader>
 
