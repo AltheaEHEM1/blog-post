@@ -1,25 +1,8 @@
+import { getActiveBlogs } from "@/actions/blog-action";
 import BlogPostsGrid from "@/app/blog/blog-post-card";
 
-// Mock data fetcher - replace this with your actual data fetching logic
-async function getBlogPosts() {
-	// Simulate database/API delay
-	await new Promise((resolve) => setTimeout(resolve, 1500));
-
-	return [
-		{
-			id: "1",
-			category: "Tech",
-			date: "July 09, 2026",
-			title: "Learning Next.js",
-			excerpt:
-				"Exploring the fundamentals of server components and data fetching.",
-		},
-		// Add more post objects here...
-	];
-}
-
 const Blog = async () => {
-	const posts = await getBlogPosts();
+	const posts = await getActiveBlogs();
 
 	return (
 		<main className="min-h-screen text-slate-200">
