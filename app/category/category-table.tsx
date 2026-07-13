@@ -10,6 +10,7 @@ import {
 } from "@tanstack/react-table";
 import { Eye, Pencil, Plus, Search, Trash2 } from "lucide-react";
 import { useMemo, useState } from "react";
+import { toast } from "sonner";
 import FormModal from "@/app/category/form-modal";
 import ViewModal from "@/app/category/view-modal";
 import {
@@ -51,7 +52,12 @@ export default function CategoryTable({ categories }: { categories: Category[] }
   const [viewCategory, setViewCategory] = useState<Category | null>(null);
 
   const handleDelete = async (id: string) => {
-    await deleteCategory(id); // soft delete — revalidatePath refreshes the list automatically
+    try {
+      await deleteCategory(id); // soft delete — revalidatePath refreshes the list automatically
+      toast.success("Category deleted successfully");
+    } catch {
+      toast.error("Failed to delete category");
+    }
   };
 
   const columns = useMemo<ColumnDef<Category>[]>(

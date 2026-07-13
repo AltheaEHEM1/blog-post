@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useEffect, useRef } from "react";
+import { toast } from "sonner";
 import { addComment } from "@/actions/comment-action";
 
 interface Comment {
@@ -22,6 +23,10 @@ export default function CommentSection({ blogId, initialComments }: CommentSecti
     useEffect(() => {
         if (state?.success) {
             formRef.current?.reset();
+            toast.success("Comment submitted! It'll appear once approved.");
+        } else if (state?.error && typeof state.error === "object") {
+            const firstError = Object.values(state.error).flat()[0];
+            if (firstError) toast.error(firstError as string);
         }
     }, [state]);
 

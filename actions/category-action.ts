@@ -14,7 +14,6 @@ function slugify(name: string) {
   return name.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 }
 
-//add category
 export async function createCategory(_: unknown, formData: FormData) {
   const parsed = categorySchema.safeParse({
     name: formData.get("name"),
@@ -36,8 +35,6 @@ export async function createCategory(_: unknown, formData: FormData) {
   return { success: true };
 }
 
-
-//edit category
 export async function updateCategory(_: unknown, formData: FormData) {
   const id = formData.get("id") as string;
   const parsed = categorySchema.safeParse({
@@ -61,7 +58,6 @@ export async function updateCategory(_: unknown, formData: FormData) {
   return { success: true };
 }
 
-//delete category
 export async function deleteCategory(id: string) {
   await db.update(categories).set({ deletedAt: new Date() }).where(eq(categories.id, id));
   revalidatePath("/category");
@@ -74,3 +70,4 @@ export async function getActiveCategories() {
 export async function getDeletedCategories() {
   return db.select().from(categories).where(isNotNull(categories.deletedAt)).orderBy(desc(categories.deletedAt));
 }
+
