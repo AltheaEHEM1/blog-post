@@ -2,6 +2,7 @@
 
 import {
   type ColumnDef,
+  type ColumnFiltersState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
@@ -43,8 +44,17 @@ type Category = {
   createdAt: Date;
 };
 
+// Define the filter function outside the component
+const isWithinDate = (row: any, columnId: string, filterValue: string) => {
+  if (!filterValue) return true;
+  const rowDate = new Date(row.getValue(columnId)).toLocaleDateString();
+  const filterDate = new Date(filterValue).toLocaleDateString();
+  return rowDate === filterDate;
+};
+
 export default function CategoryTable({ categories }: { categories: Category[] }) {
   const [globalFilter, setGlobalFilter] = useState("");
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [editCategory, setEditCategory] = useState<Category | null>(null);
   const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 });
@@ -53,7 +63,7 @@ export default function CategoryTable({ categories }: { categories: Category[] }
 
   const handleDelete = async (id: string) => {
     try {
-      await deleteCategory(id); // soft delete — revalidatePath refreshes the list automatically
+      await deleteCategory(id);
       toast.success("Category deleted successfully");
     } catch {
       toast.error("Failed to delete category");
@@ -82,6 +92,7 @@ export default function CategoryTable({ categories }: { categories: Category[] }
       {
         accessorKey: "createdAt",
         header: "Created At",
+        filterFn: isWithinDate,
         cell: ({ row }) => new Date(row.original.createdAt).toLocaleDateString(),
       },
       {
@@ -136,14 +147,15 @@ export default function CategoryTable({ categories }: { categories: Category[] }
         ),
       },
     ],
-    [],
+    []
   );
 
   const table = useReactTable({
     data: categories,
     columns,
-    state: { globalFilter, pagination },
+    state: { globalFilter, pagination, columnFilters },
     onGlobalFilterChange: setGlobalFilter,
+    onColumnFiltersChange: setColumnFilters,
     onPaginationChange: setPagination,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -161,6 +173,15 @@ export default function CategoryTable({ categories }: { categories: Category[] }
               value={globalFilter ?? ""}
               onChange={(e) => setGlobalFilter(e.target.value)}
               className="h-8 w-48 pl-8 pr-3 text-xs rounded-md border border-gray-200 outline-none focus:ring-1 focus:ring-green-400"
+            />
+          </div>
+
+          <div className="flex items-center gap-2">
+            <label className="text-xs font-mono text-gray-500">Filter Date:</label>
+            <input
+              type="date"
+              className="h-8 px-2 text-xs rounded-md border border-gray-200 outline-none focus:ring-1 focus:ring-green-400"
+              onChange={(e) => table.getColumn("createdAt")?.setFilterValue(e.target.value)}
             />
           </div>
 
@@ -184,7 +205,7 @@ export default function CategoryTable({ categories }: { categories: Category[] }
             <tbody className="divide-y divide-gray-100 text-xs">
               {table.getRowModel().rows?.length === 0 && (
                 <tr>
-                  <td colSpan={4} className="p-6 text-center text-gray-400">No categories yet.</td>
+                  <td colSpan={4} className="p-6 text-center text-gray-400">No categories found.</td>
                 </tr>
               )}
               {table.getRowModel().rows.map((row) => (
