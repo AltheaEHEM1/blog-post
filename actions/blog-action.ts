@@ -11,6 +11,7 @@ const blogSchema = z.object({
     body: z.string().trim().min(10, "Body must be at least 10 characters"),
     authorName: z.string().trim().min(1, "Author is required").max(100),
     categoryId: z.string().uuid("Please select a category"),
+    imageUrl: z.string().optional(),
 });
 
 function slugify(title: string) {
@@ -42,12 +43,14 @@ export async function createBlog(_: unknown, formData: FormData) {
             body: parsed.data.body,
             authorName: parsed.data.authorName,
             categoryId: parsed.data.categoryId,
+            imageUrl: parsed.data.imageUrl,
         });
     } catch {
         return { error: { title: ["A blog with a similar title already exists"] } };
     }
 
     revalidatePath("/blog");
+    revalidatePath("/blog_admin");
     return { success: true };
 }
 
@@ -63,6 +66,7 @@ export async function updateBlog(_: unknown, formData: FormData) {
         body: formData.get("body"),
         authorName: formData.get("authorName"),
         categoryId: formData.get("categoryId"),
+        imageUrl: formData.get("imageUrl") || undefined,
     });
 
     if (!id) return { error: { title: ["Missing blog id"] } };
@@ -76,6 +80,7 @@ export async function updateBlog(_: unknown, formData: FormData) {
             body: parsed.data.body,
             authorName: parsed.data.authorName,
             categoryId: parsed.data.categoryId,
+            imageUrl: parsed.data.imageUrl,
             updatedAt: new Date(),
         }).where(eq(blogs.id, id));
     } catch {
@@ -83,6 +88,7 @@ export async function updateBlog(_: unknown, formData: FormData) {
     }
 
     revalidatePath("/blog");
+    revalidatePath("/blog_admin");
     return { success: true };
 }
 
@@ -92,10 +98,20 @@ export async function updateBlog(_: unknown, formData: FormData) {
 export async function deleteBlog(id: string) {
     await db.update(blogs).set({ deletedAt: new Date() }).where(eq(blogs.id, id));
     revalidatePath("/blog");
+    revalidatePath("/blog_admin");
 }
 
 // ─────────────────────────────────────────────
-// READ — active blogs, with category joined in
+// RESTORE
+// ─────────────────────────────────────────────
+export async function restoreBlog(id: string) {
+    await db.update(blogs).set({ deletedAt: null }).where(eq(blogs.id, id));
+    revalidatePath("/blog");
+    revalidatePath("/blog_admin");
+}
+
+// ─────────────────────────────────────────────
+// READ — active blogs, with category joined in (admin list + public list)
 // ─────────────────────────────────────────────
 export async function getActiveBlogs() {
     return db.query.blogs.findMany({
@@ -106,11 +122,21 @@ export async function getActiveBlogs() {
 }
 
 // ─────────────────────────────────────────────
-// READ — single blog by id (for edit form / view)
+// READ — single blog by id (admin edit form)
 // ─────────────────────────────────────────────
 export async function getBlogById(id: string) {
     return db.query.blogs.findFirst({
         where: eq(blogs.id, id),
+        with: { category: true },
+    });
+}
+
+// ─────────────────────────────────────────────
+// READ — single blog by slug (public detail page)
+// ─────────────────────────────────────────────
+export async function getBlogBySlug(slug: string) {
+    return db.query.blogs.findFirst({
+        where: eq(blogs.slug, slug),
         with: { category: true },
     });
 }
