@@ -150,7 +150,7 @@ export default function CommentTable({ comments }: CommentTableProps) {
     return (
         <>
             <div className="flex flex-col h-full overflow-hidden">
-                <div className="flex flex-wrap gap-4 items-center mb-4 shrink-0">
+                <div className="flex flex-wrap gap-4 items-center justify-between mb-4 w-full shrink-0">
                     <div className="relative flex items-center">
                         <Search className="absolute left-2.5 text-gray-400" size={14} />
                         <input
@@ -179,11 +179,10 @@ export default function CommentTable({ comments }: CommentTableProps) {
                             key={tab}
                             type="button"
                             onClick={() => setActiveTab(tab as "pending" | "approved")}
-                            className={`px-4 py-1.5 text-xs rounded-t-md font-medium transition-all ${
-                                activeTab === tab
-                                    ? "bg-green-700 text-white"
-                                    : "bg-green-50 text-green-700 border"
-                            }`}
+                            className={`px-4 py-1.5 text-xs rounded-t-md font-medium transition-all ${activeTab === tab
+                                ? "bg-green-700 text-white"
+                                : "bg-green-50 text-green-700 border"
+                                }`}
                         >
                             {tab === "pending" ? "For Approval" : "Approved"}
                         </button>
@@ -196,8 +195,8 @@ export default function CommentTable({ comments }: CommentTableProps) {
                             {table.getHeaderGroups().map((headerGroup) => (
                                 <tr key={headerGroup.id}>
                                     {headerGroup.headers.map((header) => (
-                                        <th 
-                                            key={header.id} 
+                                        <th
+                                            key={header.id}
                                             className={`p-4 text-green-800 border-b ${columnWidths[header.column.id] || "w-auto"}`}
                                         >
                                             {flexRender(header.column.columnDef.header, header.getContext())}
@@ -217,8 +216,8 @@ export default function CommentTable({ comments }: CommentTableProps) {
                             {table.getRowModel().rows.map((row) => (
                                 <tr key={row.id} className="bg-green-50 hover:bg-green-100 transition-colors">
                                     {row.getVisibleCells().map((cell) => (
-                                        <td 
-                                            key={cell.id} 
+                                        <td
+                                            key={cell.id}
                                             className={`p-4 text-gray-600 whitespace-normal break-words ${columnWidths[cell.column.id] || "w-auto"}`}
                                         >
                                             {flexRender(cell.column.columnDef.cell, cell.getContext())}

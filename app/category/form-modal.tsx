@@ -31,7 +31,6 @@ export default function FormModal({
             onClose();
         } else if (state?.error) {
             const firstError = Object.values(state.error).flat()[0];
-            if (firstError) toast.error(firstError as string);
         }
     }, [state, onClose, initialData]);
 

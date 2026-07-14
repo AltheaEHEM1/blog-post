@@ -25,7 +25,6 @@ export default function BlogForm({ initialData, categories, onDone, onCancel }: 
 			onDone();
 		} else if (state?.error) {
 			const firstError = Object.values(state.error).flat()[0];
-			if (firstError) toast.error(firstError as string);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [state, onDone, initialData]);
