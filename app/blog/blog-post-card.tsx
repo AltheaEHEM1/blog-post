@@ -46,10 +46,6 @@ const BlogPostsGrid = ({ blogPosts }: { blogPosts: Post[] }) => {
 						{post.title}
 					</h2>
 
-					<p className="text-slate-600 dark:text-slate-400 text-sm font-mono leading-relaxed mb-6 grow">
-						{post.subtitle || excerptFrom(post.body)}
-					</p>
-
 					<Link
 						href={`/blog/${post.slug}`}
 						className="inline-flex items-center text-sm font-bold text-slate-900 dark:text-white group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors"

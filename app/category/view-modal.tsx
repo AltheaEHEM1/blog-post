@@ -17,7 +17,7 @@ export default function ViewModal({ opened, onClose, data }: ViewModalProps) {
 					</div>
 					{data.description && (
 						<div className="flex items-start gap-4">
-							<span className="font-semibold text-gray-700 w-32 shrink-0">
+							<span className="font-semibold text-gray-700 w-28 shrink-0">
 								Description:
 							</span>
 							<p className="flex-1 min-w-0 break-words text-gray-600 leading-relaxed">

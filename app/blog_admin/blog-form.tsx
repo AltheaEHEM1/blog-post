@@ -1,6 +1,5 @@
 "use client";
 
-import { ArrowLeft } from "lucide-react";
 import { useActionState, useEffect } from "react";
 import { toast } from "sonner";
 import { createBlog, updateBlog } from "@/actions/blog-action";
@@ -14,21 +13,14 @@ interface BlogFormProps {
 	onCancel: () => void;
 }
 
-export default function BlogForm({
-	initialData,
-	categories,
-	onDone,
-	onCancel,
-}: BlogFormProps) {
+export default function BlogForm({ initialData, categories, onDone, onCancel }: BlogFormProps) {
 	const action = initialData ? updateBlog : createBlog;
 	const [state, formAction, isPending] = useActionState(action, null);
 
 	useEffect(() => {
 		if (state?.success) {
 			toast.success(
-				initialData
-					? "Blog post updated successfully"
-					: "Blog post published successfully",
+				initialData ? "Blog post updated successfully" : "Blog post published successfully",
 			);
 			onDone();
 		} else if (state?.error) {
@@ -40,19 +32,9 @@ export default function BlogForm({
 
 	return (
 		<div className="flex flex-col h-full overflow-auto pb-8">
-			<button
-				type="button"
-				onClick={onCancel}
-				className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-green-600 transition-colors font-mono mb-4 w-fit cursor-pointer"
-			>
-				<ArrowLeft size={14} /> Back to Articles
-			</button>
-
 			<div className="px-7">
 				<form action={formAction} className="space-y-6">
-					{initialData && (
-						<input type="hidden" name="id" value={initialData.id} />
-					)}
+					{initialData && <input type="hidden" name="id" value={initialData.id} />}
 
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-2">
 						<div className="flex flex-col">
@@ -71,9 +53,7 @@ export default function BlogForm({
 								placeholder="Enter title"
 							/>
 							{state?.error?.title && (
-								<p className="text-xs text-red-500 mt-1 font-mono">
-									{state.error.title[0]}
-								</p>
+								<p className="text-xs text-red-500 mt-1 font-mono">{state.error.title[0]}</p>
 							)}
 						</div>
 
@@ -112,9 +92,7 @@ export default function BlogForm({
 								placeholder="Writer's name..."
 							/>
 							{state?.error?.authorName && (
-								<p className="text-xs text-red-500 mt-1 font-mono">
-									{state.error.authorName[0]}
-								</p>
+								<p className="text-xs text-red-500 mt-1 font-mono">{state.error.authorName[0]}</p>
 							)}
 						</div>
 
@@ -139,9 +117,7 @@ export default function BlogForm({
 								))}
 							</select>
 							{state?.error?.categoryId && (
-								<p className="text-xs text-red-500 mt-1 font-mono">
-									{state.error.categoryId[0]}
-								</p>
+								<p className="text-xs text-red-500 mt-1 font-mono">{state.error.categoryId[0]}</p>
 							)}
 						</div>
 					</div>
@@ -156,38 +132,22 @@ export default function BlogForm({
 						<textarea
 							id="body-input"
 							name="body"
-							rows={4}
+							rows={20}
 							defaultValue={initialData?.body ?? ""}
 							className="w-full rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs font-mono focus:border-green-50 focus:outline-none focus:ring-1 focus:ring-green-50 leading-relaxed"
 							placeholder="Compose your article..."
 						/>
 						{state?.error?.body && (
-							<p className="text-xs text-red-500 mt-1 font-mono">
-								{state.error.body[0]}
-							</p>
+							<p className="text-xs text-red-500 mt-1 font-mono">{state.error.body[0]}</p>
 						)}
 					</div>
 
 					<div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
-						<Button
-							type="button"
-							variant="ghost"
-							onClick={onCancel}
-							className="cursor-pointer"
-						>
+						<Button type="button" variant="ghost" onClick={onCancel} className="cursor-pointer">
 							Cancel
 						</Button>
-						<Button
-							type="submit"
-							variant="green"
-							className="cursor-pointer"
-							disabled={isPending}
-						>
-							{isPending
-								? "Saving..."
-								: initialData
-									? "Update Post"
-									: "Publish Post"}
+						<Button type="submit" variant="green" className="cursor-pointer" disabled={isPending}>
+							{isPending ? "Saving..." : initialData ? "Update Post" : "Publish Post"}
 						</Button>
 					</div>
 				</form>
