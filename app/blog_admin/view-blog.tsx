@@ -1,6 +1,7 @@
 "use client";
 
 import { Calendar, Tag, User } from "lucide-react";
+import Image from "next/image";
 import type { BlogPost } from "./blog-admin";
 
 interface ViewBlogProps {
@@ -11,6 +12,21 @@ interface ViewBlogProps {
 export default function ViewBlog({ data }: ViewBlogProps) {
     return (
         <div className="flex flex-col h-full w-full min-h-0 overflow-y-auto overflow-x-hidden px-7">
+            {data.imageUrl && (
+                <div className="relative w-full overflow-hidden rounded-2xl shadow-lg border border-gray-200/50 mb-6">
+                    <div className="relative aspect-video w-full">
+                        <Image
+                            src={data.imageUrl}
+                            alt={data.title}
+                            fill
+                            priority
+                            className="object-cover"
+                            sizes="(max-width: 768px) 100vw, 800px"
+                        />
+                    </div>
+                </div>
+            )}
+
             <div className="flex items-center gap-2 text-green-700 bg-green-50 px-3 py-1 rounded-full text-xs font-mono border border-green-200 w-fit max-w-full">
                 <Tag size={12} className="shrink-0" />
                 <span className="truncate">{data.category?.name ?? "Uncategorized"}</span>

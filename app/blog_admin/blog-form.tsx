@@ -1,6 +1,8 @@
 "use client";
 
-import { useActionState, useEffect } from "react";
+import { ImageIcon, X } from "lucide-react";
+import Image from "next/image";
+import { type ChangeEvent, useActionState, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { createBlog, updateBlog } from "@/actions/blog-action";
 import { Button } from "@/components/button/button";
@@ -16,6 +18,7 @@ interface BlogFormProps {
 export default function BlogForm({ initialData, categories, onDone, onCancel }: BlogFormProps) {
 	const action = initialData ? updateBlog : createBlog;
 	const [state, formAction, isPending] = useActionState(action, null);
+	const [imagePreview, setImagePreview] = useState<string>(initialData?.imageUrl ?? "");
 
 	useEffect(() => {
 		if (state?.success) {
@@ -25,15 +28,79 @@ export default function BlogForm({ initialData, categories, onDone, onCancel }: 
 			onDone();
 		} else if (state?.error) {
 			const firstError = Object.values(state.error).flat()[0];
+			if (firstError) toast.error(firstError as string);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [state, onDone, initialData]);
+
+	const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+		const file = e.target.files?.[0] ?? null;
+		if (file) {
+			const reader = new FileReader();
+			reader.onload = () => {
+				setImagePreview(reader.result as string);
+			};
+			reader.readAsDataURL(file);
+		}
+	};
+
+	const handleRemoveImage = () => {
+		setImagePreview("");
+	};
 
 	return (
 		<div className="flex flex-col h-full overflow-auto pb-8">
 			<div className="px-7">
 				<form action={formAction} className="space-y-6">
 					{initialData && <input type="hidden" name="id" value={initialData.id} />}
+					<input type="hidden" name="imageUrl" value={imagePreview} />
+
+					<div className="flex flex-col">
+						<label
+							className="block text-xs font-semibold mb-1 font-mono text-gray-700"
+							htmlFor="image-input"
+						>
+							Cover Image
+						</label>
+						{imagePreview ? (
+							<div className="relative border border-gray-200 rounded-lg p-2 flex items-center gap-3 bg-gray-50/50">
+								<Image
+									src={imagePreview}
+									alt="Preview of the uploaded blog cover"
+									className="object-cover rounded"
+									width={80}
+									height={56}
+								/>
+								<div className="flex-1 min-w-0">
+									<p className="text-xs font-mono text-gray-500 truncate">
+										Cover Image Selected
+									</p>
+								</div>
+								<button
+									type="button"
+									onClick={handleRemoveImage}
+									className="p-1 rounded-full text-red-500 hover:bg-red-50 hover:text-red-600 transition-colors shrink-0 cursor-pointer"
+									title="Remove Image"
+								>
+									<X size={16} />
+								</button>
+							</div>
+						) : (
+							<div className="relative border border-dashed border-gray-300 rounded-lg hover:border-green-400 hover:bg-green-50/10 transition-colors p-15 flex flex-col items-center justify-center gap-1.5 cursor-pointer">
+								<ImageIcon size={30} className="text-gray-400" />
+								<span className="text-xs text-gray-500 font-mono">
+									Upload high-res cover image
+								</span>
+								<input
+									id="image-input"
+									type="file"
+									accept="image/*"
+									onChange={handleImageChange}
+									className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+								/>
+							</div>
+						)}
+					</div>
 
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-2">
 						<div className="flex flex-col">

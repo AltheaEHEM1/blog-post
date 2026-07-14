@@ -82,6 +82,7 @@ export async function updateBlog(_: unknown, formData: FormData) {
 				body: parsed.data.body,
 				authorName: parsed.data.authorName,
 				categoryId: parsed.data.categoryId,
+				imageUrl: parsed.data.imageUrl,
 				updatedAt: new Date(),
 			})
 			.where(eq(blogs.id, id));

@@ -12,6 +12,7 @@ interface Post {
 	subtitle: string | null;
 	body: string;
 	createdAt: Date;
+	imageUrl: string | null;
 	category: { id: string; name: string; slug: string } | null;
 }
 
@@ -57,10 +58,7 @@ export default function BlogPageContent({
 	const router = useRouter();
 	const [query, setQuery] = useState(initialQuery ?? "");
 
-	const filteredPosts = useMemo(
-		() => filterPosts(posts, query),
-		[posts, query],
-	);
+	const filteredPosts = useMemo(() => filterPosts(posts, query), [posts, query]);
 
 	useEffect(() => {
 		const timer = setTimeout(() => {

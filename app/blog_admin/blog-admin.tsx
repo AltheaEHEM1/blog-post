@@ -17,6 +17,7 @@ export interface BlogPost {
     authorName: string;
     categoryId: string | null;
     category: { id: string; name: string } | null;
+    imageUrl: string | null;
     createdAt: Date;
 }
 

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getBlogBySlug } from "@/actions/blog-action";
 import { getApprovedComments } from "@/actions/comment-action";
@@ -29,6 +30,19 @@ export default async function IndividualBlog({
 						← BACK TO LOGS
 					</Link>
 				</div>
+
+				{post.imageUrl && (
+					<div className="relative w-full aspect-[21/9] rounded-xl overflow-hidden mb-8 border border-slate-800">
+						<Image
+							src={post.imageUrl}
+							alt={post.title}
+							fill
+							priority
+							className="object-cover"
+							sizes="(max-width: 768px) 100vw, 1000px"
+						/>
+					</div>
+				)}
 
 				<div className="mb-4 text-xs font-semibold tracking-wider uppercase text-cyan-600 dark:text-cyan-500">
 					{post.category?.name ?? "Uncategorized"} •{" "}

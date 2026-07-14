@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 
 interface Post {
@@ -9,6 +10,7 @@ interface Post {
 	subtitle: string | null;
 	body: string;
 	createdAt: Date;
+	imageUrl: string | null;
 	category: { id: string; name: string } | null;
 }
 
@@ -31,30 +33,48 @@ const BlogPostsGrid = ({ blogPosts }: { blogPosts: Post[] }) => {
 			{blogPosts.map((post) => (
 				<article
 					key={post.id}
-					className="group flex flex-col border border-slate-200 dark:border-slate-800 p-6 rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/10 hover:border-cyan-500/50"
+					className="group flex flex-col border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/10 hover:border-cyan-500/50"
 				>
-					<div className="text-cyan-600 dark:text-cyan-500 text-xs font-semibold tracking-wider mb-3 uppercase">
-						{post.category?.name ?? "Uncategorized"} •{" "}
-						{new Date(post.createdAt).toLocaleDateString("en-US", {
-							year: "numeric",
-							month: "long",
-							day: "numeric",
-						})}
+					{post.imageUrl && (
+						<div className="relative w-full aspect-video">
+							<Image
+								src={post.imageUrl}
+								alt={post.title}
+								fill
+								className="object-cover"
+								sizes="(max-width: 768px) 100vw, 400px"
+							/>
+						</div>
+					)}
+
+					<div className="flex flex-col flex-1 p-6">
+						<div className="text-cyan-600 dark:text-cyan-500 text-xs font-semibold tracking-wider mb-3 uppercase">
+							{post.category?.name ?? "Uncategorized"} •{" "}
+							{new Date(post.createdAt).toLocaleDateString("en-US", {
+								year: "numeric",
+								month: "long",
+								day: "numeric",
+							})}
+						</div>
+
+						<h2 className="text-xl font-bold text-slate-900 dark:text-white mb-3 group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">
+							{post.title}
+						</h2>
+
+						<p className="text-slate-600 dark:text-slate-400 text-sm font-mono leading-relaxed mb-6 grow">
+							{post.subtitle || excerptFrom(post.body)}
+						</p>
+
+						<Link
+							href={`/blog/${post.slug}`}
+							className="inline-flex items-center text-sm font-bold text-slate-900 dark:text-white group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors"
+						>
+							READ LOG
+							<span className="ml-2 transform transition-transform group-hover:translate-x-1">
+								→
+							</span>
+						</Link>
 					</div>
-
-					<h2 className="text-xl font-bold text-slate-900 dark:text-white mb-3 group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">
-						{post.title}
-					</h2>
-
-					<Link
-						href={`/blog/${post.slug}`}
-						className="inline-flex items-center text-sm font-bold text-slate-900 dark:text-white group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors"
-					>
-						READ LOG
-						<span className="ml-2 transform transition-transform group-hover:translate-x-1">
-							→
-						</span>
-					</Link>
 				</article>
 			))}
 		</div>
