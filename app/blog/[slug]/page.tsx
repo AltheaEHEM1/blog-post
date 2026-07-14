@@ -19,7 +19,7 @@ export default async function IndividualBlog({
 	const comments = await getApprovedComments(post.id);
 
 	return (
-		<main className="min-h-screen transition-colors duration-300">
+		<main className="min-h-screen text-slate-200 transition-colors duration-300">
 			<article className="max-w-5xl mx-auto px-6 py-10">
 				<div className="mb-12">
 					<Link

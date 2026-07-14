@@ -3,6 +3,7 @@ import type React from "react";
 import { useState } from "react";
 import Sidebar from "../sidebar/sidebar";
 import Header from "../sidebar/sidebar-header";
+import BackgroundAdmin from "@/components/background/background-admin";
 
 export default function BaseAdmin({
 	children,
@@ -11,6 +12,7 @@ export default function BaseAdmin({
 
 	return (
 		<div className="flex h-screen overflow-hidden">
+			<BackgroundAdmin/>
 			<Sidebar opened={sidebarOpen} close={() => setSidebarOpen(false)} />
 
 			<div className="flex-1 flex flex-col min-w-0">

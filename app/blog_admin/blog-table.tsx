@@ -116,8 +116,8 @@ export default function BlogTable({
 										Confirm Deletion
 									</AlertDialogTitle>
 									<AlertDialogDescription className="font-mono text-sm">
-										This action cannot be undone. This will permanently delete the post 
-    and all associated comments.
+										This action cannot be undone. This will permanently delete
+										the post and all associated comments.
 									</AlertDialogDescription>
 								</AlertDialogHeader>
 
