@@ -109,11 +109,10 @@ export default function BlogPageContent({
 			<div className="flex flex-wrap gap-2 mb-12 justify-center">
 				<Link
 					href={buildBlogHref(undefined, query)}
-					className={`text-xs font-mono px-4 py-1.5 border transition-colors rounded-sm ${
-						!category
-							? "bg-cyan-600 text-white border-cyan-600"
-							: "border-slate-700 text-slate-400 hover:border-cyan-500 hover:text-cyan-400"
-					}`}
+					className={`text-xs font-mono px-4 py-1.5 border transition-colors rounded-sm ${!category
+						? "bg-cyan-600 text-white border-cyan-600"
+						: "border-slate-700 text-slate-400 hover:border-cyan-500 hover:text-cyan-400"
+						}`}
 				>
 					All
 				</Link>
@@ -121,11 +120,10 @@ export default function BlogPageContent({
 					<Link
 						key={cat.id}
 						href={buildBlogHref(cat.slug, query)}
-						className={`text-xs font-mono px-4 py-1.5 border transition-colors rounded-sm ${
-							category === cat.slug
-								? "bg-cyan-600 text-white border-cyan-600"
-								: "border-slate-700 text-slate-400 hover:border-cyan-500 hover:text-cyan-400"
-						}`}
+						className={`text-xs font-mono px-4 py-1.5 border transition-colors rounded-sm ${category === cat.slug
+							? "bg-cyan-600 text-white border-cyan-600"
+							: "border-slate-700 text-slate-400 hover:border-cyan-500 hover:text-cyan-400"
+							}`}
 					>
 						{cat.name}
 					</Link>
