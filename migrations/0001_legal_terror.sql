@@ -1,0 +1,1 @@
+ALTER TABLE "blogs" DROP COLUMN "image_url";
