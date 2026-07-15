@@ -1,6 +1,8 @@
 import { getActiveBlogs } from "@/actions/blog-action";
 import { getActiveCategories } from "@/actions/category-action";
 import BlogPageContent from "@/app/blog/blog-page-content";
+import BlogPostsGrid from "@/app/blog/blog-post-card";
+import BlogCategoryFilter from "@/app/blog/blog-category-filter";
 
 export default async function Blog({
 	searchParams,
@@ -9,25 +11,37 @@ export default async function Blog({
 }) {
 	const params = await searchParams;
 	const category = params.category;
-	const q = params.q;
+	const q = params.q?.toLowerCase() ?? "";
 
 	const [allPosts, categories] = await Promise.all([
 		getActiveBlogs(),
 		getActiveCategories(),
 	]);
 
-	const posts = category
-		? allPosts.filter((post) => post.category?.slug === category)
-		: allPosts;
+	// Perform filtering on the server
+	const filteredPosts = allPosts.filter((post) => {
+		const matchesCategory = category ? post.category?.slug === category : true;
+		const matchesQuery = q
+			? post.title.toLowerCase().includes(q) ||
+				post.category?.name.toLowerCase().includes(q)
+			: true;
+		return matchesCategory && matchesQuery;
+	});
 
 	return (
-		<section className="max-w-6xl mx-auto px-6 py-20">
-			<BlogPageContent
-				posts={posts}
-				categories={categories}
-				category={category}
-				initialQuery={q}
-			/>
-		</section>
+		<>
+			<BlogPageContent initialQuery={params.q ?? ""} category={category} />
+
+			<section className="max-w-6xl mx-auto px-6">
+				<BlogCategoryFilter
+					categories={categories}
+					category={category}
+					query={params.q ?? ""}
+				/>
+				<div className="mt-8">
+					<BlogPostsGrid blogPosts={filteredPosts} />
+				</div>
+			</section>
+		</>
 	);
 }
