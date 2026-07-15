@@ -41,6 +41,7 @@ type Category = {
 	id: string;
 	name: string;
 	slug: string;
+	description: string | null;
 	createdAt: Date;
 };
 
@@ -299,7 +300,7 @@ export default function CategoryTable({
 						? {
 								id: editCategory.id,
 								name: editCategory.name,
-								description: null, // Provide a default value for the missing field
+								description: editCategory.description,
 							}
 						: undefined
 				}
