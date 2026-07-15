@@ -1,26 +1,36 @@
 import Image from "next/image";
+import Link from "next/link";
 
-export default function Navbar() {
+interface NavbarProps {
+	title: string;
+}
+
+export default function Navbar({ title }: NavbarProps) {
 	return (
-		<div className="w-full text-center py-15 relative overflow-hidden h-50">
+		<div className="w-full relative overflow-hidden h-40 flex flex-col justify-center items-center">
+			{/* Back Button - Absolute to keep it from affecting center alignment */}
+			<Link
+				href="/blog"
+				className="absolute top-4 left-8 z-30 inline-flex items-center text-sm font-bold text-slate-200 hover:text-cyan-400 border-b border-transparent hover:border-cyan-400 transition-all"
+			>
+				← Back
+			</Link>
+
+			{/* Background Image */}
 			<Image
 				src="/assets/main-project_bg.png"
 				alt="Blog post background"
 				fill
 				priority
-				className="object-cover object-[center_60%] pointer-events-none"
+				className="object-cover object-[center_50%] pointer-events-none"
 			/>
+			<div className="absolute inset-0 bg-black/60 pointer-events-none z-10"></div>
 
-			<div className="absolute inset-0 bg-black/50 pointer-events-none z-10"></div>
-
-			{/* Content Container */}
-			<div className="flex flex-col items-center justify-center relative z-20 text-white px-4">
-				<h1 className="text-xl sm:text-2xl md:text-3xl font-mono">
-					Welcome to AAA.blog_post
+			{/* Centered Title */}
+			<div className="relative z-20 text-white px-6 text-center max-w-4xl">
+				<h1 className="text-3xl md:text-5xl font-mono font-bold leading-tight">
+					{title}
 				</h1>
-				<p className="text-[9px] sm:text-[10px] md:text-xs font-mono text-gray-200 mt-2 max-w-2xl">
-					this is my blog where i share my thoughts and experiences
-				</p>
 			</div>
 		</div>
 	);

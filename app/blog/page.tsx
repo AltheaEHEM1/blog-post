@@ -1,7 +1,6 @@
 import { getActiveBlogs } from "@/actions/blog-action";
 import { getActiveCategories } from "@/actions/category-action";
 import BlogPageContent from "@/app/blog/blog-page-content";
-import Navbar from "@/components/navbar/navbar";
 
 export default async function Blog({
 	searchParams,
@@ -23,17 +22,14 @@ export default async function Blog({
 
 	return (
 		<>
-			<Navbar />
-			<main className="min-h-screen text-slate-200">
-				<section className="max-w-6xl mx-auto px-6 py-20">
-					<BlogPageContent
-						posts={posts}
-						categories={categories}
-						category={category}
-						initialQuery={q}
-					/>
-				</section>
-			</main>
+			<section className="max-w-6xl mx-auto px-6 py-20">
+				<BlogPageContent
+					posts={posts}
+					categories={categories}
+					category={category}
+					initialQuery={q}
+				/>
+			</section>
 		</>
 	);
 }

@@ -1,9 +1,9 @@
-import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getBlogBySlug } from "@/actions/blog-action";
 import { getApprovedComments } from "@/actions/comment-action";
 import CommentSection from "./comment";
+import Navbar from "@/components/navbar/navbar";
 
 export default async function IndividualBlog({
 	params,
@@ -20,59 +20,55 @@ export default async function IndividualBlog({
 	const comments = await getApprovedComments(post.id);
 
 	return (
-		<main className="min-h-screen text-slate-200 transition-colors duration-300">
-			<article className="max-w-5xl mx-auto px-6 py-10">
-				<div className="mb-12">
-					<Link
-						href="/blog"
-						className="inline-flex items-center text-sm font-bold text-slate-500 hover:text-cyan-600 dark:text-slate-400 dark:hover:text-cyan-500 border-b border-slate-300 hover:border-cyan-600 dark:border-slate-700 dark:hover:border-cyan-500 transition-colors"
-					>
-						← BACK TO LOGS
-					</Link>
-				</div>
+		<>
+			<Navbar title={post.title} />
 
+			<section className="max-w-4xl mx-auto px-6 py-12">
+				{/* Hero Image */}
 				{post.imageUrl && (
-					<div className="relative w-full aspect-[21/9] rounded-xl overflow-hidden mb-8 border border-slate-800">
+					<div className="relative w-full aspect-[21/9] rounded-xl overflow-hidden mb-12 shadow-2xl border border-slate-200 dark:border-slate-800">
 						<Image
 							src={post.imageUrl}
 							alt={post.title}
 							fill
 							priority
 							className="object-cover"
-							sizes="(max-width: 768px) 100vw, 1000px"
+							sizes="(max-width: 1024px) 100vw, 900px"
 						/>
 					</div>
 				)}
 
-				<div className="mb-4 text-xs font-semibold tracking-wider uppercase text-cyan-600 dark:text-cyan-500">
-					{post.category?.name ?? "Uncategorized"} •{" "}
-					{new Date(post.createdAt).toLocaleDateString("en-US", {
-						year: "numeric",
-						month: "long",
-						day: "numeric",
-					})}
-				</div>
+				{/* Metadata Header */}
+				<div className="text-center mb-12 border-b border-slate-200 dark:border-slate-800 pb-8">
+					<div className="text-xs font-bold tracking-widest uppercase text-cyan-600 mb-4">
+						{post.category?.name ?? "Uncategorized"} •{" "}
+						{new Date(post.createdAt).toLocaleDateString("en-US", {
+							year: "numeric",
+							month: "long",
+							day: "numeric",
+						})}
+					</div>
 
-				<h1 className="text-3xl md:text-3xl font-bold mb-2 text-slate-900 dark:text-white">
-					{post.title}
-				</h1>
+					{post.subtitle && (
+						<p className="text-slate-600 dark:text-slate-400 italic font-mono text-base mb-6 max-w-2xl mx-auto">
+							{post.subtitle}
+						</p>
+					)}
 
-				{post.subtitle && (
-					<p className="text-slate-500 dark:text-slate-400 italic mb-8 font-mono text-sm">
-						{post.subtitle}
+					<p className="text-xs font-mono text-slate-500">
+						BY {post.authorName?.toUpperCase() || "ANONYMOUS"}
 					</p>
-				)}
-
-				<p className="text-xs font-mono text-slate-500 mb-8">
-					By {post.authorName}
-				</p>
-
-				<div className="prose dark:prose-invert font-mono prose-slate prose-lg max-w-none text-justify whitespace-pre-wrap">
-					{post.body}
 				</div>
 
-				<CommentSection blogId={post.id} initialComments={comments} />
-			</article>
-		</main>
+				{/* Body Content */}
+				<article className=" text-justify text-white">
+					{post.body}
+				</article>
+
+				<div className="mt-16">
+					<CommentSection blogId={post.id} initialComments={comments} />
+				</div>
+			</section>
+		</>
 	);
 }

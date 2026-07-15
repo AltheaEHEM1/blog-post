@@ -35,7 +35,7 @@ export default function CommentSection({
 	}, [state]);
 
 	return (
-		<section className="mt-16 border-t border-slate-200 dark:border-slate-800 pt-10">
+		<>
 			<h2 className="text-xl font-bold text-slate-900 dark:text-white mb-6">
 				Comments ({initialComments.length})
 			</h2>
@@ -128,6 +128,6 @@ export default function CommentSection({
 					{isPending ? "Posting..." : "Post Comment"}
 				</button>
 			</form>
-		</section>
+		</>
 	);
 }
