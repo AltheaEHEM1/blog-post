@@ -53,18 +53,11 @@ export default function BlogPageContent({ latestPosts }: BlogPageContentProps) {
 	return (
 		<>
 			{/* Hero */}
-			<div
-				className="relative min-h-70 flex flex-col justify-center px-4 bg-center bg-cover bg-no-repeat overflow-hidden mb-8"
-				style={{
-					backgroundImage: "url('/assets/bg_image.png')",
-					backgroundPosition: "50% 70%",
-				}}
-			>
-				<div className="absolute inset-0 bg-linear-to-b from-black/80 via-black/60 to-black/90 z-0" />
-
-				<div className="relative z-10 flex flex-col items-center gap-2">
-					<div className="text-center space-y-2 min-h-[120px]">
-						<h1 className="font-mono text-4xl md:text-5xl font-bold text-white tracking-tighter drop-shadow-[0_0_10px_rgba(34,211,238,0.5)]">
+			<div className="sticky top-0 z-50 bg-black/10 backdrop-blur-md border-b border-white/10 w-full py-3 px-4">
+				<div className="relative z-10 flex flex-col items-center gap-1">
+					<div className="text-center">
+						{/* Reduced from 2xl to text-lg for a smaller, tighter feel */}
+						<h1 className="font-mono text-lg font-bold text-white tracking-tighter drop-shadow-[0_0_10px_rgba(34,211,238,0.5)]">
 							{renderStyledH1(h1Text)}
 							<motion.span
 								animate={{ opacity: [0, 1, 0] }}
@@ -74,7 +67,9 @@ export default function BlogPageContent({ latestPosts }: BlogPageContentProps) {
 								|
 							</motion.span>
 						</h1>
-						<p className="text-slate-400 font-mono text-xs uppercase tracking-[0.2em] h-4">
+
+						{/* Subtext kept at extra-small to maintain hierarchy */}
+						<p className="text-slate-400 font-mono text-[10px] uppercase tracking-[0.2em]">
 							{pText}
 						</p>
 					</div>
