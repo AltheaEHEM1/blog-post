@@ -294,7 +294,15 @@ export default function CategoryTable({
 				key={modalOpen ? (editCategory?.id ?? "new") : "closed"}
 				opened={modalOpen}
 				onClose={handleCloseModal}
-				initialData={editCategory ?? undefined}
+				initialData={
+					editCategory
+						? {
+								id: editCategory.id,
+								name: editCategory.name,
+								description: null, // Provide a default value for the missing field
+							}
+						: undefined
+				}
 			/>
 			<ViewModal
 				opened={viewOpen}
