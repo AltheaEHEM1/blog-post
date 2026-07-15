@@ -66,10 +66,14 @@ export default function ViewModal({
 						<span className="font-medium w-32">Blog Title:</span>
 						<span>{data.blog?.title ?? "Untitled"}</span>
 					</div>
+
 					<div className="flex items-start gap-4">
-						<span className="font-medium w-32 shrink-0">Comment:</span>
-						<p className="flex-1 wrap-break-words">{data.body}</p>
+						<span className="font-medium w-28 shrink-0">Comment:</span>
+						<p className="flex-1 break-words whitespace-pre-wrap min-w-0">
+							{data.body}
+						</p>
 					</div>
+
 					<div className="flex items-center">
 						<span className="font-medium w-32">Created At:</span>
 						<span>{new Date(data.createdAt).toLocaleDateString()}</span>

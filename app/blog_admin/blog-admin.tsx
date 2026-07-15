@@ -1,5 +1,6 @@
 "use client";
 
+import { ArrowLeft } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { deleteBlog } from "@/actions/blog-action";
@@ -16,6 +17,7 @@ export interface BlogPost {
 	authorName: string;
 	categoryId: string | null;
 	category: { id: string; name: string } | null;
+	imageUrl: string | null;
 	createdAt: Date;
 }
 
@@ -101,7 +103,16 @@ export default function BlogAdmin({
 				area="Administrator"
 				showArea={headerInfo.showArea}
 			/>
-			<div className="flex-1 overflow-hidden">
+			<div className="flex-1 overflow-hidden flex flex-col">
+				{view !== "list" && (
+					<button
+						type="button"
+						onClick={handleCancel}
+						className="flex items-center gap-1.5 text-xs mb-7 text-gray-500 hover:text-green-600 transition-colors font-mono mb-4 w-fit cursor-pointer shrink-0"
+					>
+						<ArrowLeft size={14} /> Back to Articles
+					</button>
+				)}
 				{view === "list" && (
 					<BlogTable
 						data={initialBlogs}
@@ -123,7 +134,6 @@ export default function BlogAdmin({
 				{view === "view" && selectedBlog && (
 					<ViewBlog
 						data={selectedBlog}
-						onBack={handleCancel}
 						onEdit={() => handleEdit(selectedBlog)}
 					/>
 				)}

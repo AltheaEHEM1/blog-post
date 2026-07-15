@@ -34,7 +34,6 @@ import {
 } from "@/components/pagination";
 import type { BlogPost } from "./blog-admin";
 
-// Define the filter function outside the component
 const isWithinDate = (
 	row: Row<BlogPost>,
 	columnId: string,
@@ -116,8 +115,8 @@ export default function BlogTable({
 										Confirm Deletion
 									</AlertDialogTitle>
 									<AlertDialogDescription className="font-mono text-sm">
-										This action cannot be undone. This will permanently delete the post 
-    and all associated comments.
+										This action cannot be undone. This will permanently delete
+										the post and all associated comments.
 									</AlertDialogDescription>
 								</AlertDialogHeader>
 
@@ -193,7 +192,7 @@ export default function BlogTable({
 			</div>
 
 			<div className="flex-1 overflow-auto border border-gray-200 rounded-md">
-				<table className="w-full min-w-[600px] text-left text-sm font-mono border-collapse">
+				<table className="w-full min-w-[600px] text-left text-sm font-mono border-collapse table-fixed">
 					<thead className="bg-green-100 sticky top-0 z-10">
 						<tr>
 							<th className="p-3 w-1/2 text-green-800 border-b">Title</th>
@@ -218,7 +217,10 @@ export default function BlogTable({
 								className="bg-green-50 hover:bg-green-100 transition-colors"
 							>
 								{row.getVisibleCells().map((cell) => (
-									<td key={cell.id} className="p-3 text-gray-600 truncate">
+									<td
+										key={cell.id}
+										className="p-3 text-gray-600 whitespace-normal break-words"
+									>
 										{flexRender(cell.column.columnDef.cell, cell.getContext())}
 									</td>
 								))}

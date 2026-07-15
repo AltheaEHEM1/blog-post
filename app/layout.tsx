@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Background from "@/components/background/background";
 import LayoutWrapper from "@/components/layout/LayoutWrapper";
 import { Toaster } from "@/components/sonner/sonner";
 
@@ -22,16 +21,15 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
 	children,
-}: Readonly<{
+}: {
 	children: React.ReactNode;
-}>) {
+}) {
 	return (
 		<html
 			lang="en"
 			className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
 		>
-			<body className="min-h-full flex flex-col relative bg-transparent">
-				<Background />
+			<body className="relative flex min-h-full flex-col bg-transparent">
 				<LayoutWrapper>{children}</LayoutWrapper>
 				<Toaster position="top-right" richColors />
 			</body>

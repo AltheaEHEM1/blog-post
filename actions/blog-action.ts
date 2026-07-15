@@ -82,6 +82,7 @@ export async function updateBlog(_: unknown, formData: FormData) {
 				body: parsed.data.body,
 				authorName: parsed.data.authorName,
 				categoryId: parsed.data.categoryId,
+				imageUrl: parsed.data.imageUrl,
 				updatedAt: new Date(),
 			})
 			.where(eq(blogs.id, id));
@@ -101,14 +102,7 @@ export async function deleteBlog(id: string) {
 	revalidatePath("/blog_admin");
 }
 
-// RESTORE
-export async function restoreBlog(id: string) {
-	await db.update(blogs).set({ deletedAt: null }).where(eq(blogs.id, id));
-	revalidatePath("/blog");
-	revalidatePath("/blog_admin");
-}
-
-// READ — active blogs, with category joined in (admin list + public list)
+// READ — active blogs, with category joined
 export async function getActiveBlogs() {
 	return db.query.blogs.findMany({
 		where: isNull(blogs.deletedAt),

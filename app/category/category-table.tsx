@@ -41,7 +41,6 @@ type Category = {
 	id: string;
 	name: string;
 	slug: string;
-	description: string | null;
 	createdAt: Date;
 };
 
@@ -92,7 +91,6 @@ export default function CategoryTable({
 	const columns = useMemo<ColumnDef<Category>[]>(
 		() => [
 			{ accessorKey: "name", header: "Category" },
-			{ accessorKey: "description", header: "Description" },
 			{
 				accessorKey: "createdAt",
 				header: "Created At",
@@ -210,15 +208,13 @@ export default function CategoryTable({
 				</div>
 
 				<div className="flex-1 overflow-auto border border-gray-200 rounded-md">
-					<table className="w-full min-w-150 text-left text-sm font-mono border-collapse">
+					<table className="w-full min-w-[600px] text-left text-sm font-mono border-collapse table-fixed">
 						<thead className="bg-green-100 sticky top-0 z-10">
 							<tr>
 								<th className="p-3 w-[20%] text-green-800 border-b text-left font-semibold">
 									Category
 								</th>
-								<th className="p-3 w-[50%] text-green-800 border-b text-left font-semibold">
-									Description
-								</th>
+
 								<th className="p-3 w-[18%] text-green-800 border-b text-left font-semibold whitespace-nowrap">
 									Created At
 								</th>
@@ -245,7 +241,7 @@ export default function CategoryTable({
 										return (
 											<td
 												key={cell.id}
-												className={`p-3 text-gray-600 truncate ${isActions ? "text-center" : "text-left"}`}
+												className={`p-3 text-gray-600 whitespace-normal break-words ${isActions ? "text-center" : "text-left"}`}
 											>
 												{flexRender(
 													cell.column.columnDef.cell,

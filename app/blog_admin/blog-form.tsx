@@ -1,7 +1,8 @@
 "use client";
 
-import { ArrowLeft } from "lucide-react";
-import { useActionState, useEffect } from "react";
+import { ImageIcon, X } from "lucide-react";
+import Image from "next/image";
+import { type ChangeEvent, useActionState, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { createBlog, updateBlog } from "@/actions/blog-action";
 import { Button } from "@/components/button/button";
@@ -22,6 +23,9 @@ export default function BlogForm({
 }: BlogFormProps) {
 	const action = initialData ? updateBlog : createBlog;
 	const [state, formAction, isPending] = useActionState(action, null);
+	const [imagePreview, setImagePreview] = useState<string>(
+		initialData?.imageUrl ?? "",
+	);
 
 	useEffect(() => {
 		if (state?.success) {
@@ -38,89 +42,77 @@ export default function BlogForm({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [state, onDone, initialData]);
 
+	const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+		const file = e.target.files?.[0] ?? null;
+		if (file) {
+			const reader = new FileReader();
+			reader.onload = () => {
+				setImagePreview(reader.result as string);
+			};
+			reader.readAsDataURL(file);
+		}
+	};
+
+	const handleRemoveImage = () => {
+		setImagePreview("");
+	};
+
 	return (
-		<div className="flex flex-col h-full overflow-auto pb-8">
-			<button
-				type="button"
-				onClick={onCancel}
-				className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-green-600 transition-colors font-mono mb-4 w-fit cursor-pointer"
-			>
-				<ArrowLeft size={14} /> Back to Articles
-			</button>
+		<div className="flex flex-col h-full overflow-auto pb-8 px-7">
+			<form action={formAction} className="space-y-8">
+				{initialData && (
+					<input type="hidden" name="id" value={initialData.id} />
+				)}
+				<input type="hidden" name="imageUrl" value={imagePreview} />
 
-			<div className="px-7">
-				<form action={formAction} className="space-y-6">
-					{initialData && (
-						<input type="hidden" name="id" value={initialData.id} />
-					)}
-
-					<div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-						<div className="flex flex-col">
-							<label
-								className="block text-xs font-semibold mb-0.5 font-mono text-gray-500"
-								htmlFor="title-input"
-							>
-								Title <span className="text-red-500">*</span>
-							</label>
-							<input
-								id="title-input"
-								name="title"
-								type="text"
-								defaultValue={initialData?.title ?? ""}
-								className="w-full rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs font-mono focus:border-green-50 focus:outline-none focus:ring-1 focus:ring-green-50"
-								placeholder="Enter title"
-							/>
-							{state?.error?.title && (
-								<p className="text-xs text-red-500 mt-1 font-mono">
-									{state.error.title[0]}
-								</p>
-							)}
-						</div>
-
-						<div className="flex flex-col">
-							<label
-								className="block text-xs font-semibold mb-0.5 font-mono text-gray-500"
-								htmlFor="subtitle-input"
-							>
-								Subtitle
-							</label>
-							<input
-								id="subtitle-input"
-								name="subtitle"
-								type="text"
-								defaultValue={initialData?.subtitle ?? ""}
-								className="w-full rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs font-mono focus:border-green-50 focus:outline-none focus:ring-1 focus:ring-green-50"
-								placeholder="Article hook..."
-							/>
-						</div>
+				{/* Section 1: Basic Info */}
+				<div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+					<div className="md:col-span-2 flex flex-col gap-1.5">
+						<label
+							className="text-xs font-semibold font-mono text-gray-600"
+							htmlFor="title-input"
+						>
+							Title <span className="text-red-500">*</span>
+						</label>
+						<input
+							id="title-input"
+							name="title"
+							type="text"
+							defaultValue={initialData?.title ?? ""}
+							className="w-full rounded-md border border-gray-400 px-3 py-2 text-xs font-mono focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
+							placeholder="Enter title"
+						/>
+						{state?.error?.title && (
+							<p className="text-xs text-red-500 font-mono">
+								{state.error.title[0]}
+							</p>
+						)}
 					</div>
 
-					<div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-3">
-						<div className="flex flex-col">
-							<label
-								className="block text-xs font-semibold mb-0.5 font-mono text-gray-500"
-								htmlFor="author-input"
-							>
-								Author
-							</label>
-							<input
-								id="author-input"
-								name="authorName"
-								type="text"
-								defaultValue={initialData?.authorName ?? ""}
-								className="w-full rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs font-mono focus:border-green-50 focus:outline-none focus:ring-1 focus:ring-green-50"
-								placeholder="Writer's name..."
-							/>
-							{state?.error?.authorName && (
-								<p className="text-xs text-red-500 mt-1 font-mono">
-									{state.error.authorName[0]}
-								</p>
-							)}
-						</div>
+					<div className="md:col-span-1 flex flex-col gap-1.5">
+						<label
+							className="text-xs font-semibold font-mono text-gray-600"
+							htmlFor="author-input"
+						>
+							Author
+						</label>
+						<input
+							id="author-input"
+							name="authorName"
+							type="text"
+							defaultValue={initialData?.authorName ?? ""}
+							className="w-full rounded-md border border-gray-400 px-3 py-2 text-xs font-mono focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
+							placeholder="Writer's name..."
+						/>
+					</div>
+				</div>
 
-						<div className="flex flex-col">
+				{/* Section 2: Categorization and Hook */}
+				<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+					<div className="flex flex-col gap-4">
+						<div className="flex flex-col gap-1.5">
 							<label
-								className="block text-xs font-semibold mb-0.5 font-mono text-gray-500"
+								className="text-xs font-semibold font-mono text-gray-600"
 								htmlFor="category-input"
 							>
 								Category <span className="text-red-500">*</span>
@@ -129,7 +121,7 @@ export default function BlogForm({
 								id="category-input"
 								name="categoryId"
 								defaultValue={initialData?.categoryId ?? ""}
-								className="w-full rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs font-mono focus:border-green-50 focus:outline-none focus:ring-1 focus:ring-green-50 text-gray-700"
+								className="w-full rounded-md border border-gray-400 px-3 py-2 text-xs font-mono focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500 text-gray-700"
 							>
 								<option value="">Select category</option>
 								{categories.map((cat) => (
@@ -138,60 +130,112 @@ export default function BlogForm({
 									</option>
 								))}
 							</select>
-							{state?.error?.categoryId && (
-								<p className="text-xs text-red-500 mt-1 font-mono">
-									{state.error.categoryId[0]}
-								</p>
-							)}
+						</div>
+						<div className="flex flex-col gap-1.5">
+							<label
+								className="text-xs font-semibold font-mono text-gray-600"
+								htmlFor="subtitle-input"
+							>
+								Subtitle
+							</label>
+							<textarea
+								id="subtitle-input"
+								name="subtitle"
+								rows={4}
+								defaultValue={initialData?.subtitle ?? ""}
+								className="w-full rounded-md border border-gray-400 px-3 py-2 text-xs font-mono focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500 resize-none"
+								placeholder="Article hook..."
+							/>
 						</div>
 					</div>
 
-					<div className="flex flex-col mt-3">
+					{/* Cover Image Upload */}
+					<div className="flex flex-col gap-1.5">
 						<label
-							className="block text-xs font-semibold mb-0.5 font-mono text-gray-500"
-							htmlFor="body-input"
+							htmlFor="cover-image"
+							className="text-xs font-semibold font-mono text-gray-700"
 						>
-							Body <span className="text-red-500">*</span>
+							Cover Image
 						</label>
-						<textarea
-							id="body-input"
-							name="body"
-							rows={4}
-							defaultValue={initialData?.body ?? ""}
-							className="w-full rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs font-mono focus:border-green-50 focus:outline-none focus:ring-1 focus:ring-green-50 leading-relaxed"
-							placeholder="Compose your article..."
-						/>
-						{state?.error?.body && (
-							<p className="text-xs text-red-500 mt-1 font-mono">
-								{state.error.body[0]}
-							</p>
+						{imagePreview ? (
+							<div className="relative border border-gray-200 rounded-lg p-3 flex items-center gap-3 bg-gray-50/50 h-[100px]">
+								<Image
+									src={imagePreview}
+									alt="Cover preview"
+									className="object-cover rounded"
+									width={80}
+									height={56}
+								/>
+								<span className="text-xs font-mono text-gray-600 flex-1">
+									Cover Image Selected
+								</span>
+								<button
+									type="button"
+									onClick={handleRemoveImage}
+									className="p-1 rounded-full text-red-500 hover:bg-red-50 cursor-pointer"
+								>
+									<X size={16} />
+								</button>
+							</div>
+						) : (
+							<div className="relative border border-dashed border-gray-400 rounded-lg hover:border-green-400 hover:bg-green-50/10 transition-colors h-[150px] flex flex-col items-center justify-center gap-2 cursor-pointer">
+								<ImageIcon size={24} className="text-gray-400" />
+								<span className="text-xs text-gray-500 font-mono">
+									Upload cover image
+								</span>
+								<input
+									type="file"
+									accept="image/*"
+									onChange={handleImageChange}
+									className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+								/>
+							</div>
 						)}
 					</div>
+				</div>
 
-					<div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
-						<Button
-							type="button"
-							variant="ghost"
-							onClick={onCancel}
-							className="cursor-pointer"
-						>
-							Cancel
-						</Button>
-						<Button
-							type="submit"
-							variant="green"
-							className="cursor-pointer"
-							disabled={isPending}
-						>
-							{isPending
-								? "Saving..."
-								: initialData
-									? "Update Post"
-									: "Publish Post"}
-						</Button>
-					</div>
-				</form>
-			</div>
+				{/* Section 3: Content Body */}
+				<div className="flex flex-col gap-1.5">
+					<label
+						className="text-xs font-semibold font-mono text-gray-600"
+						htmlFor="body-input"
+					>
+						Body <span className="text-red-500">*</span>
+					</label>
+					<textarea
+						id="body-input"
+						name="body"
+						rows={12}
+						defaultValue={initialData?.body ?? ""}
+						className="w-full rounded-md border border-gray-400 px-3 py-2 text-xs font-mono focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500 leading-relaxed"
+						placeholder="Compose your article..."
+					/>
+				</div>
+
+				{/* Footer Actions */}
+				<div className="flex justify-end gap-3">
+					<Button
+						type="button"
+						variant="ghost"
+						onClick={onCancel}
+						className="cursor-pointer"
+					>
+						Cancel
+					</Button>
+					<Button
+						type="submit"
+						variant="green"
+						className="cursor-pointer"
+						disabled={isPending}
+					>
+						{isPending
+							? "Saving..."
+							: initialData
+								? "Update Post"
+								: "Publish Post"}
+					</Button>
+				</div>
+			</form>
 		</div>
 	);
 }

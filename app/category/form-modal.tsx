@@ -30,11 +30,12 @@ export default function FormModal({
 			);
 			onClose();
 		} else if (state?.error) {
-			// catch-all errors (e.g. duplicate name) that aren't tied to a single field
 			const firstError = Object.values(state.error).flat()[0];
-			if (firstError) toast.error(firstError as string);
+
+			if (firstError) {
+				toast.error(firstError);
+			}
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [state, onClose, initialData]);
 
 	return (
@@ -60,12 +61,17 @@ export default function FormModal({
 				</div>
 			}
 		>
-			<form id="category-form" action={formAction} className="space-y-2">
+			{/* Added overflow-hidden to form to prevent child content from causing scrollbars */}
+			<form
+				id="category-form"
+				action={formAction}
+				className="space-y-4 overflow-hidden"
+			>
 				{initialData && (
 					<input type="hidden" name="id" value={initialData.id} />
 				)}
 
-				<div>
+				<div className="w-full">
 					<label
 						className="block text-xs font-medium text-gray-700 mb-0.5 font-mono"
 						htmlFor="name"
@@ -87,7 +93,7 @@ export default function FormModal({
 					)}
 				</div>
 
-				<div>
+				<div className="w-full">
 					<label
 						className="block text-xs font-medium text-gray-700 mb-0.5 font-mono"
 						htmlFor="description"
@@ -97,9 +103,9 @@ export default function FormModal({
 					<textarea
 						id="description"
 						name="description"
-						rows={2}
+						rows={5}
 						defaultValue={initialData?.description ?? ""}
-						className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-mono shadow-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
+						className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-mono shadow-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500 resize-none"
 						placeholder="Enter description"
 					/>
 				</div>

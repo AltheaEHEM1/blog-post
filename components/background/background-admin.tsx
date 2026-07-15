@@ -14,7 +14,7 @@ interface LeafConfig {
 	sway: string;
 }
 
-export default function Background() {
+export default function BackgroundAdmin() {
 	// Start with no leaves on the server to avoid mismatched random values
 	const [leaves, setLeaves] = useState<LeafConfig[]>([]);
 

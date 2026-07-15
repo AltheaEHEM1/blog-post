@@ -18,7 +18,7 @@ export default function BaseModal({
 	title,
 	children,
 	footer,
-	width = 400,
+	width = 600,
 }: BaseModalProps) {
 	useEffect(() => {
 		const handleEsc = (e: KeyboardEvent) => {
