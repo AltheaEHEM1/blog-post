@@ -36,7 +36,7 @@ export async function login(_: unknown, formData: FormData) {
 		secure: process.env.NODE_ENV === "production",
 		sameSite: "lax",
 		path: "/",
-		maxAge: 60 * 60 * 8, // 8 hours
+		maxAge: 60 * 60 * 8,
 	});
 
 	redirect("/blog_admin");

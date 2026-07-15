@@ -35,27 +35,27 @@ export default function CommentSection({
 	}, [state]);
 
 	return (
-		<>
-			<h2 className="text-xl font-bold text-slate-900 dark:text-white mb-6">
+		<div>
+			<h2 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white mb-6">
 				Comments ({initialComments.length})
 			</h2>
 
 			{initialComments.length === 0 ? (
-				<p className="text-sm font-mono text-slate-500 mb-8">
+				<p className="text-sm text-slate-500 mb-8">
 					No comments yet — be the first to comment.
 				</p>
 			) : (
-				<div className="space-y-6 mb-10">
+				<div className="space-y-4 mb-10">
 					{initialComments.map((comment) => (
 						<div
 							key={comment.id}
-							className="border border-slate-200 dark:border-slate-800 rounded-lg p-4"
+							className="border border-slate-200 dark:border-slate-800 rounded-lg p-4 min-w-0"
 						>
-							<div className="flex items-center justify-between mb-2">
-								<span className="font-semibold text-sm text-slate-900 dark:text-white">
+							<div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 mb-2">
+								<span className="font-semibold text-sm text-slate-900 dark:text-white break-words min-w-0">
 									{comment.authorName}
 								</span>
-								<span className="text-xs font-mono text-slate-500">
+								<span className="text-xs text-slate-500 shrink-0">
 									{new Date(comment.createdAt).toLocaleDateString("en-US", {
 										year: "numeric",
 										month: "long",
@@ -63,7 +63,7 @@ export default function CommentSection({
 									})}
 								</span>
 							</div>
-							<p className="text-sm text-slate-600 dark:text-slate-400 font-mono leading-relaxed">
+							<p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed break-words [overflow-wrap:anywhere]">
 								{comment.body}
 							</p>
 						</div>
@@ -71,7 +71,7 @@ export default function CommentSection({
 				</div>
 			)}
 
-			<h3 className="text-sm font-mono uppercase tracking-wider text-slate-500 mb-4">
+			<h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500 mb-4">
 				Leave a comment
 			</h3>
 
@@ -81,7 +81,7 @@ export default function CommentSection({
 				<div>
 					<label
 						htmlFor="authorName"
-						className="block text-xs font-mono text-slate-500 mb-1 uppercase tracking-wider"
+						className="block text-xs font-medium text-slate-500 mb-1 uppercase tracking-wide"
 					>
 						Name
 					</label>
@@ -90,10 +90,10 @@ export default function CommentSection({
 						name="authorName"
 						type="text"
 						placeholder="Your name"
-						className="w-full rounded-md border border-slate-300 dark:border-slate-700 bg-transparent px-3 py-2 text-sm font-mono focus:outline-none focus:ring-1 focus:ring-cyan-500"
+						className="w-full rounded-md border border-slate-300 dark:border-slate-700 bg-transparent px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-cyan-500"
 					/>
 					{state?.error?.authorName && (
-						<p className="text-xs text-red-500 mt-1 font-mono">
+						<p className="text-xs text-red-500 mt-1 break-words">
 							{state.error.authorName[0]}
 						</p>
 					)}
@@ -102,7 +102,7 @@ export default function CommentSection({
 				<div>
 					<label
 						htmlFor="body"
-						className="block text-xs font-mono text-slate-500 mb-1 uppercase tracking-wider"
+						className="block text-xs font-medium text-slate-500 mb-1 uppercase tracking-wide"
 					>
 						Comment
 					</label>
@@ -111,10 +111,10 @@ export default function CommentSection({
 						name="body"
 						rows={4}
 						placeholder="Write a comment... (min 10 characters)"
-						className="w-full rounded-md border border-slate-300 dark:border-slate-700 bg-transparent px-3 py-2 text-sm font-mono focus:outline-none focus:ring-1 focus:ring-cyan-500"
+						className="w-full rounded-md border border-slate-300 dark:border-slate-700 bg-transparent px-3 py-2 text-sm resize-y focus:outline-none focus:ring-1 focus:ring-cyan-500"
 					/>
 					{state?.error?.body && (
-						<p className="text-xs text-red-500 mt-1 font-mono">
+						<p className="text-xs text-red-500 mt-1 break-words">
 							{state.error.body[0]}
 						</p>
 					)}
@@ -123,11 +123,11 @@ export default function CommentSection({
 				<button
 					type="submit"
 					disabled={isPending}
-					className="inline-flex items-center text-sm font-bold text-slate-900 dark:text-white border border-slate-300 dark:border-slate-700 rounded-md px-4 py-2 hover:border-cyan-500 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors disabled:opacity-50"
+					className="inline-flex items-center text-sm font-semibold text-white bg-slate-900 dark:bg-cyan-600 rounded-md px-4 py-2 hover:opacity-90 transition-opacity disabled:opacity-50"
 				>
 					{isPending ? "Posting..." : "Post Comment"}
 				</button>
 			</form>
-		</>
+		</div>
 	);
 }

@@ -58,10 +58,10 @@ export default function BlogPageContent({ latestPosts }: BlogPageContentProps) {
 	};
 
 	return (
-		<div className="w-full">
-			{/* Sticky/Responsive Hero Header */}
-			<div className="sticky top-0 z-40 bg-slate-950/85 backdrop-blur-md border-b border-white/10 w-full py-3 px-4">
-				<div className="relative z-10 flex flex-col items-center max-w-7xl mx-auto">
+		<div className="flex flex-col min-h-screen w-full">
+			{/* Sticky Header Section */}
+			<header className="sticky top-0 z-50 w-full bg-slate-950/85 backdrop-blur-md border-b border-white/10 py-3 px-4 shadow-lg">
+				<div className="flex flex-col items-center max-w-7xl mx-auto">
 					<div className="text-center">
 						<h1 className="font-mono text-sm sm:text-base md:text-lg font-bold text-white tracking-tighter drop-shadow-[0_0_10px_rgba(34,211,238,0.5)] inline-flex items-center justify-center">
 							{renderStyledH1(h1Text)}
@@ -74,15 +74,17 @@ export default function BlogPageContent({ latestPosts }: BlogPageContentProps) {
 							</motion.span>
 						</h1>
 
-						<p className="text-slate-400 font-mono text-[9px] sm:text-[10px] uppercase tracking-[0.15em] sm:tracking-[0.2em] mt-0.5">
+						<p className="text-slate-400 font-mono text-[9px] sm:text-[10px] uppercase tracking-[0.15em] sm:tracking-[0.2em] mt-0.5 h-4">
 							{pText}
 						</p>
 					</div>
 				</div>
-			</div>
+			</header>
 
 			{/* Carousel Section */}
-			<BlogCarousel posts={latestPosts} />
+			<main className="flex-grow overflow-auto w-full">
+				<BlogCarousel posts={latestPosts} />
+			</main>
 		</div>
 	);
 }
