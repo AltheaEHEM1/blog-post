@@ -24,22 +24,36 @@ export default function BlogCategoryFilter({
 	};
 
 	return (
-		<div className="flex flex-wrap gap-2 mb-8 justify-center">
-			<Link
-				href={buildHref()}
-				className={`px-4 py-1.5 text-xs font-mono border rounded-sm ${!category ? "bg-cyan-600 text-white" : "border-slate-700 text-slate-400"}`}
-			>
-				All
-			</Link>
-			{categories.map((cat) => (
+		// Changed to flex-col to stack the H1 on top of the links
+		<div className="flex flex-col items-center gap-4 mb-8">
+			<h1 className="font-mono text-md uppercase tracking-widest text-white">
+				Categories
+			</h1>
+
+			{/* Links container stays flex-wrap so they flow nicely */}
+			<div className="flex flex-wrap gap-2 justify-center">
 				<Link
-					key={cat.id}
-					href={buildHref(cat.slug)}
-					className={`px-4 py-1.5 text-xs font-mono border rounded-sm ${category === cat.slug ? "bg-cyan-600 text-white" : "border-slate-700 text-slate-400"}`}
+					href={buildHref()}
+					className={`px-4 py-1.5 text-xs font-mono border rounded-sm transition-colors ${!category
+							? "bg-cyan-600 text-white border-cyan-600"
+							: "border-slate-700 text-slate-400 hover:border-slate-500"
+						}`}
 				>
-					{cat.name}
+					All
 				</Link>
-			))}
+				{categories.map((cat) => (
+					<Link
+						key={cat.id}
+						href={buildHref(cat.slug)}
+						className={`px-4 py-1.5 text-xs font-mono border rounded-sm transition-colors ${category === cat.slug
+								? "bg-cyan-600 text-white border-cyan-600"
+								: "border-slate-700 text-slate-400 hover:border-slate-500"
+							}`}
+					>
+						{cat.name}
+					</Link>
+				))}
+			</div>
 		</div>
 	);
 }

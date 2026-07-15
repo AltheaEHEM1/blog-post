@@ -9,91 +9,77 @@ export default function AdminAuth() {
 	const [state, formAction, isPending] = useActionState(login, null);
 
 	return (
-		<div className="w-full flex justify-center">
-			<div className="w-full max-w-sm">
-				<div className="mb-6">
-					<span className="inline-block text-lg tracking-widest uppercase">
-						<span className="font-sans">&lt;</span>
-						<span className=" mx-0.5">AAA.Blog_post</span>
-						<span className="font-sans">/&gt;</span>
-					</span>
+		<div className="max-w-md mx-auto p-8 bg-white/50 backdrop-blur-lg border border-white/30 rounded-2xl shadow-2xl space-y-6 flex flex-col items-center">
+			{/* Centered Heading */}
+			<div className="text-center">
+				<h1 className="font-mono text-2xl font-bold text-cyan-400 tracking-tighter drop-shadow-[0_0_10px_rgba(34,211,238,0.5)]">
+					&lt;AAA.blog_post/&gt;
+				</h1>
+				<h2 className="font-mono text-xl font-bold text-cyan-400 tracking-tighter mt-2">
+					Login
+				</h2>
+			</div>
+
+			<form action={formAction} className="flex flex-col items-center w-full">
+				{/* Email Section */}
+				<div className="mb-4 w-full max-w-[235px]">
+					<label htmlFor="email" className="block text-xs font-bold text-[#1A1A2E] mb-1 pl-1">
+						Email
+					</label>
+					<input
+						id="email"
+						name="email"
+						type="email"
+						placeholder="Enter email"
+						maxLength={128}
+						className="w-full px-3 py-2 bg-gray-100 border border-transparent rounded-lg focus:border-[#1A1A2E] focus:outline-none focus:ring-1 focus:ring-[#1A1A2E] transition-all text-sm placeholder:text-xs"
+					/>
+					{state?.error?.email && (
+						<p className="text-[10px] text-red-500 mt-1 pl-1">{state.error.email[0]}</p>
+					)}
 				</div>
 
-				<form action={formAction}>
-					<div className="mb-4">
-						<label
-							htmlFor="email"
-							className="block text-sm font-bold text-[#1A1A2E] mb-1"
-						>
-							Email
-						</label>
+				{/* Password Section */}
+				<div className="mb-4 w-full max-w-[235px]">
+					<label htmlFor="password" className="block text-xs font-bold text-[#1A1A2E] mb-1 pl-1">
+						Password
+					</label>
+					<div className="relative w-full">
 						<input
-							id="email"
-							name="email"
-							type="email"
-							placeholder="Enter email address"
-							maxLength={128}
-							className="w-full px-4 py-2.5 bg-gray-100 border border-transparent rounded-lg focus:border-[#470606] focus:outline-none transition-all text-sm placeholder:text-sm"
+							id="password"
+							name="password"
+							type={showPassword ? "text" : "password"}
+							placeholder="Enter password"
+							className="w-full px-3 py-2 bg-gray-100 border border-transparent rounded-lg focus:border-[#1A1A2E] focus:outline-none focus:ring-1 focus:ring-[#1A1A2E] transition-all text-sm placeholder:text-xs"
 						/>
-						{state?.error?.email && (
-							<p className="text-xs text-red-500 mt-1">
-								{state.error.email[0]}
-							</p>
-						)}
-					</div>
-
-					<div className="mb-2">
-						<label
-							htmlFor="password"
-							className="block text-sm font-bold text-[#1A1A2E] mb-1"
+						<button
+							type="button"
+							className="absolute right-3 top-2.5 text-gray-400 hover:text-[#1A1A2E]"
+							onClick={() => setShowPassword(!showPassword)}
 						>
-							Password
-						</label>
-						<div className="relative">
-							<input
-								id="password"
-								name="password"
-								type={showPassword ? "text" : "password"}
-								placeholder="Enter password"
-								className="w-full px-4 py-2.5 bg-gray-100 border border-transparent rounded-lg focus:border-[#470606] focus:outline-none transition-all text-sm placeholder:text-sm"
-							/>
-							<button
-								type="button"
-								className="absolute right-3 top-2.5 text-gray-400"
-								onClick={() => setShowPassword(!showPassword)}
-								aria-label={showPassword ? "Hide password" : "Show password"}
-							>
-								{showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-							</button>
-						</div>
-						{state?.error?.password && (
-							<p className="text-xs text-red-500 mt-1">
-								{state.error.password[0]}
-							</p>
-						)}
+							{showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
+						</button>
 					</div>
+					{state?.error?.password && (
+						<p className="text-[10px] text-red-500 mt-1 pl-1">{state.error.password[0]}</p>
+					)}
+				</div>
 
-					<button
-						type="submit"
-						disabled={isPending}
-						className="w-full bg-[#1A1A2E] text-white font-bold py-3 px-4 rounded-lg hover:bg-[#2A2A4E] transition-colors mb-6 mt-4 disabled:opacity-60"
-					>
-						{isPending ? "Signing in..." : "Login"}
-					</button>
-				</form>
+				<button
+					type="submit"
+					disabled={isPending}
+					className="w-full max-w-[235px] bg-teal-600 text-white text-sm font-bold py-2 rounded-lg hover:bg-teal-700 transition-colors mt-2 mb-4 disabled:opacity-60 active:scale-[0.98]"
+				>
+					{isPending ? "Signing in..." : "Login"}
+				</button>
+			</form>
 
-				<p className="text-xs text-gray-500 mt-4 leading-relaxed">
-					By using this service, you understand and agree to the{" "}
-					<button type="button" className="underline hover:text-black">
-						Terms of Use
-					</button>{" "}
-					and{" "}
-					<button type="button" className="underline hover:text-black">
-						Privacy Statement
-					</button>
-					.
-				</p>
-			</div>
+			<p className="text-[10px] text-gray-500 mt-4 leading-relaxed text-center">
+				By using this service, you understand and agree to the{" "}
+				<button type="button" className="underline hover:text-black">Terms of Use</button>{" "}
+				and{" "}
+				<button type="button" className="underline hover:text-black">Privacy Statement</button>.
+			</p>
 		</div>
 	);
 }
