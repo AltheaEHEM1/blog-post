@@ -1,9 +1,9 @@
 "use client";
 
-import BlogPostsGrid from "@/app/blog/blog-post-card";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
+import BlogPostsGrid from "@/app/blog/blog-post-card";
 
 interface Post {
 	id: string;
@@ -58,7 +58,10 @@ export default function BlogPageContent({
 	const router = useRouter();
 	const [query, setQuery] = useState(initialQuery ?? "");
 
-	const filteredPosts = useMemo(() => filterPosts(posts, query), [posts, query]);
+	const filteredPosts = useMemo(
+		() => filterPosts(posts, query),
+		[posts, query],
+	);
 
 	useEffect(() => {
 		const timer = setTimeout(() => {
@@ -107,10 +110,11 @@ export default function BlogPageContent({
 			<div className="flex flex-wrap gap-2 mb-12 justify-center">
 				<Link
 					href={buildBlogHref(undefined, query)}
-					className={`text-xs font-mono px-4 py-1.5 border transition-colors rounded-sm ${!category
-						? "bg-cyan-600 text-white border-cyan-600"
-						: "border-slate-700 text-slate-400 hover:border-cyan-500 hover:text-cyan-400"
-						}`}
+					className={`text-xs font-mono px-4 py-1.5 border transition-colors rounded-sm ${
+						!category
+							? "bg-cyan-600 text-white border-cyan-600"
+							: "border-slate-700 text-slate-400 hover:border-cyan-500 hover:text-cyan-400"
+					}`}
 				>
 					All
 				</Link>
@@ -118,10 +122,11 @@ export default function BlogPageContent({
 					<Link
 						key={cat.id}
 						href={buildBlogHref(cat.slug, query)}
-						className={`text-xs font-mono px-4 py-1.5 border transition-colors rounded-sm ${category === cat.slug
-							? "bg-cyan-600 text-white border-cyan-600"
-							: "border-slate-700 text-slate-400 hover:border-cyan-500 hover:text-cyan-400"
-							}`}
+						className={`text-xs font-mono px-4 py-1.5 border transition-colors rounded-sm ${
+							category === cat.slug
+								? "bg-cyan-600 text-white border-cyan-600"
+								: "border-slate-700 text-slate-400 hover:border-cyan-500 hover:text-cyan-400"
+						}`}
 					>
 						{cat.name}
 					</Link>

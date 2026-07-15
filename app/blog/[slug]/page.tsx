@@ -2,8 +2,8 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getBlogBySlug } from "@/actions/blog-action";
 import { getApprovedComments } from "@/actions/comment-action";
-import CommentSection from "./comment";
 import Navbar from "@/components/navbar/navbar";
+import CommentSection from "./comment";
 
 export default async function IndividualBlog({
 	params,
@@ -61,9 +61,7 @@ export default async function IndividualBlog({
 				</div>
 
 				{/* Body Content */}
-				<article className=" text-justify text-white">
-					{post.body}
-				</article>
+				<article className=" text-justify text-white">{post.body}</article>
 
 				<div className="mt-16">
 					<CommentSection blogId={post.id} initialComments={comments} />

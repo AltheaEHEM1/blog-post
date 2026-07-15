@@ -208,52 +208,52 @@ export default function CategoryTable({
 				</div>
 
 				<div className="flex-1 overflow-auto border border-gray-200 rounded-md">
-				<table className="w-full min-w-[600px] text-left text-sm font-mono border-collapse table-fixed">
-					<thead className="bg-green-100 sticky top-0 z-10">
-						<tr>
-							<th className="p-3 w-[20%] text-green-800 border-b text-left font-semibold">
-								Category
-							</th>
-
-							<th className="p-3 w-[18%] text-green-800 border-b text-left font-semibold whitespace-nowrap">
-								Created At
-							</th>
-							<th className="p-3 w-[12%] text-green-800 border-b text-center font-semibold">
-								Actions
-							</th>
-						</tr>
-					</thead>
-					<tbody className="divide-y divide-gray-100 text-xs">
-						{table.getRowModel().rows?.length === 0 && (
+					<table className="w-full min-w-[600px] text-left text-sm font-mono border-collapse table-fixed">
+						<thead className="bg-green-100 sticky top-0 z-10">
 							<tr>
-								<td colSpan={4} className="p-6 text-center text-gray-400">
-									No categories found.
-								</td>
+								<th className="p-3 w-[20%] text-green-800 border-b text-left font-semibold">
+									Category
+								</th>
+
+								<th className="p-3 w-[18%] text-green-800 border-b text-left font-semibold whitespace-nowrap">
+									Created At
+								</th>
+								<th className="p-3 w-[12%] text-green-800 border-b text-center font-semibold">
+									Actions
+								</th>
 							</tr>
-						)}
-						{table.getRowModel().rows.map((row) => (
-							<tr
-								key={row.id}
-								className="bg-green-50 hover:bg-green-100 transition-colors"
-							>
-								{row.getVisibleCells().map((cell) => {
-									const isActions = cell.column.id === "actions";
-									return (
-										<td
-											key={cell.id}
-											className={`p-3 text-gray-600 whitespace-normal break-words ${isActions ? "text-center" : "text-left"}`}
-										>
-											{flexRender(
-												cell.column.columnDef.cell,
-												cell.getContext(),
-											)}
-										</td>
-									);
-								})}
-							</tr>
-						))}
-					</tbody>
-				</table>
+						</thead>
+						<tbody className="divide-y divide-gray-100 text-xs">
+							{table.getRowModel().rows?.length === 0 && (
+								<tr>
+									<td colSpan={4} className="p-6 text-center text-gray-400">
+										No categories found.
+									</td>
+								</tr>
+							)}
+							{table.getRowModel().rows.map((row) => (
+								<tr
+									key={row.id}
+									className="bg-green-50 hover:bg-green-100 transition-colors"
+								>
+									{row.getVisibleCells().map((cell) => {
+										const isActions = cell.column.id === "actions";
+										return (
+											<td
+												key={cell.id}
+												className={`p-3 text-gray-600 whitespace-normal break-words ${isActions ? "text-center" : "text-left"}`}
+											>
+												{flexRender(
+													cell.column.columnDef.cell,
+													cell.getContext(),
+												)}
+											</td>
+										);
+									})}
+								</tr>
+							))}
+						</tbody>
+					</table>
 				</div>
 
 				<div className="flex justify-end mt-4 shrink-0">

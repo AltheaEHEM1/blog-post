@@ -14,11 +14,6 @@ interface Post {
 	category: { id: string; name: string } | null;
 }
 
-function excerptFrom(body: string, maxLength = 140) {
-	if (body.length <= maxLength) return body;
-	return `${body.slice(0, maxLength).trim()}...`;
-}
-
 const BlogPostsGrid = ({ blogPosts }: { blogPosts: Post[] }) => {
 	if (blogPosts.length === 0) {
 		return (

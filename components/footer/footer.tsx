@@ -11,8 +11,10 @@ export default function Footer() {
 				</span>
 				<span className="font-mono text-xs tracking-wide text-slate-400 transition-colors duration-300">
 					&copy; {currentYear}{" "}
-					<span className="font-medium text-slate-300">Althea Amor J. Asis</span>.
-					Built with passion &amp; curiosity.
+					<span className="font-medium text-slate-300">
+						Althea Amor J. Asis
+					</span>
+					. Built with passion &amp; curiosity.
 				</span>
 			</div>
 		</footer>

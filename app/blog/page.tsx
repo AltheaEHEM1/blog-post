@@ -21,16 +21,13 @@ export default async function Blog({
 		: allPosts;
 
 	return (
-		<>
-			<section className="max-w-6xl mx-auto px-6 py-20">
-				<BlogPageContent
-					posts={posts}
-					categories={categories}
-					category={category}
-					initialQuery={q}
-				/>
-			</section>
-		</>
+		<section className="max-w-6xl mx-auto px-6 py-20">
+			<BlogPageContent
+				posts={posts}
+				categories={categories}
+				category={category}
+				initialQuery={q}
+			/>
+		</section>
 	);
 }
-

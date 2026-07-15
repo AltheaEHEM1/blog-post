@@ -89,8 +89,7 @@ export default function BackgroundUser(): React.JSX.Element {
 					const fy = col.y - i * FONT_SIZE;
 					if (fy < 0 || fy > H) continue;
 
-					const calculatedAlpha =
-						i === 0 ? 0.45 : 0.45 * (1 - i / col.len);
+					const calculatedAlpha = i === 0 ? 0.45 : 0.45 * (1 - i / col.len);
 					ctx.globalAlpha = calculatedAlpha;
 					ctx.fillStyle = col.color;
 

@@ -102,8 +102,7 @@ export async function deleteBlog(id: string) {
 	revalidatePath("/blog_admin");
 }
 
-
-// READ — active blogs, with category joined 
+// READ — active blogs, with category joined
 export async function getActiveBlogs() {
 	return db.query.blogs.findMany({
 		where: isNull(blogs.deletedAt),

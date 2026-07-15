@@ -1,6 +1,6 @@
 import type React from "react";
-import Footer from "../footer/footer";
 import BackgroundUser from "@/components/background/background-user";
+import Footer from "../footer/footer";
 
 export default function BaserUser({ children }: { children: React.ReactNode }) {
 	return (
