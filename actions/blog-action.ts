@@ -22,7 +22,6 @@ function slugify(title: string) {
 		.replace(/(^-|-$)/g, "");
 }
 
-// CREATE
 export async function createBlog(_: unknown, formData: FormData) {
 	const parsed = blogSchema.safeParse({
 		title: formData.get("title"),
@@ -56,7 +55,6 @@ export async function createBlog(_: unknown, formData: FormData) {
 	return { success: true };
 }
 
-// UPDATE
 export async function updateBlog(_: unknown, formData: FormData) {
 	const id = formData.get("id") as string;
 
@@ -95,14 +93,18 @@ export async function updateBlog(_: unknown, formData: FormData) {
 	return { success: true };
 }
 
-// SOFT DELETE
 export async function deleteBlog(id: string) {
 	await db.update(blogs).set({ deletedAt: new Date() }).where(eq(blogs.id, id));
 	revalidatePath("/blog");
 	revalidatePath("/blog_admin");
 }
 
-// READ — active blogs, with category joined
+export async function restoreBlog(id: string) {
+	await db.update(blogs).set({ deletedAt: null }).where(eq(blogs.id, id));
+	revalidatePath("/blog");
+	revalidatePath("/blog_admin");
+}
+
 export async function getActiveBlogs() {
 	return db.query.blogs.findMany({
 		where: isNull(blogs.deletedAt),
@@ -111,7 +113,6 @@ export async function getActiveBlogs() {
 	});
 }
 
-// READ — single blog by id (admin edit form)
 export async function getBlogById(id: string) {
 	return db.query.blogs.findFirst({
 		where: eq(blogs.id, id),
@@ -119,7 +120,6 @@ export async function getBlogById(id: string) {
 	});
 }
 
-// READ — single blog by slug (public detail page)
 export async function getBlogBySlug(slug: string) {
 	return db.query.blogs.findFirst({
 		where: eq(blogs.slug, slug),
@@ -127,7 +127,6 @@ export async function getBlogBySlug(slug: string) {
 	});
 }
 
-// READ — deleted blogs (trash view)
 export async function getDeletedBlogs() {
 	return db
 		.select()
