@@ -4,7 +4,10 @@ import { NextResponse } from "next/server";
 const SESSION_COOKIE = "admin_session";
 
 export function middleware(request: NextRequest) {
-	const isAdminRoute = request.nextUrl.pathname.startsWith("/blog_admin");
+	const pathname = request.nextUrl.pathname;
+	
+	const adminPaths = ["/blog_admin", "/category", "/comment"];
+	const isAdminRoute = adminPaths.some((path) => pathname.startsWith(path));
 
 	if (!isAdminRoute) {
 		return NextResponse.next();
@@ -21,5 +24,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-	matcher: ["/blog_admin/:path*"],
+	matcher: ["/blog_admin/:path*", "/category/:path*", "/comment/:path*"],
 };

@@ -23,7 +23,7 @@ export default async function Blog({
 		const matchesCategory = category ? post.category?.slug === category : true;
 		const matchesQuery = q
 			? post.title.toLowerCase().includes(q) ||
-				post.category?.name.toLowerCase().includes(q)
+			post.category?.name.toLowerCase().includes(q)
 			: true;
 		return matchesCategory && matchesQuery;
 	});
