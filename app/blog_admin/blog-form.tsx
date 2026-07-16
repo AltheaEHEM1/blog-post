@@ -14,6 +14,7 @@ import { createBlog, updateBlog } from "@/actions/blog-action";
 import { uploadImage } from "@/actions/upload-action";
 import { Button } from "@/components/button/button";
 import RichTextEditor from "@/components/rich-text-editor/rich-text-editor";
+import { blogSchema, sanitizeInput } from "@/lib/validations";
 import type { BlogPost, Category } from "./blog-admin";
 
 interface BlogFormProps {
@@ -21,6 +22,13 @@ interface BlogFormProps {
 	categories: Category[];
 	onDone: () => void;
 	onCancel: () => void;
+}
+
+interface FieldErrors {
+	title?: string;
+	subtitle?: string;
+	authorName?: string;
+	body?: string;
 }
 
 export default function BlogForm({
@@ -34,7 +42,14 @@ export default function BlogForm({
 
 	const [imageUrl, setImageUrl] = useState<string>(initialData?.imageUrl ?? "");
 	const [uploading, setUploading] = useState(false);
+
+	const [title, setTitle] = useState(initialData?.title ?? "");
+	const [subtitle, setSubtitle] = useState(initialData?.subtitle ?? "");
+	const [authorName, setAuthorName] = useState(initialData?.authorName ?? "");
 	const [body, setBody] = useState<string>(initialData?.body ?? "");
+
+	const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
+
 	const fileInputRef = useRef<HTMLInputElement>(null);
 
 	useEffect(() => {
@@ -45,12 +60,52 @@ export default function BlogForm({
 					: "Blog post published successfully",
 			);
 			onDone();
-		} else if (state?.error) {
-			const firstError = Object.values(state.error).flat()[0];
-			if (firstError) toast.error(firstError as string);
 		}
+		// No toast on validation errors — those render inline below each field.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [state, onDone, initialData]);
+
+	// ── Live validation, field by field, against blogSchema.shape.<field> ──
+	const handleTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
+		const sanitized = sanitizeInput(e.target.value, 200);
+		setTitle(sanitized);
+		const result = blogSchema.shape.title.safeParse(sanitized);
+		setFieldErrors((prev) => ({
+			...prev,
+			title: result.success ? undefined : result.error.issues[0]?.message,
+		}));
+	};
+
+	const handleSubtitleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+		const sanitized = sanitizeInput(e.target.value, 200);
+		setSubtitle(sanitized);
+		const result = blogSchema.shape.subtitle.safeParse(sanitized);
+		setFieldErrors((prev) => ({
+			...prev,
+			subtitle: result.success ? undefined : result.error.issues[0]?.message,
+		}));
+	};
+
+	const handleAuthorNameChange = (e: ChangeEvent<HTMLInputElement>) => {
+		const sanitized = sanitizeInput(e.target.value, 80);
+		setAuthorName(sanitized);
+		const result = blogSchema.shape.authorName.safeParse(sanitized);
+		setFieldErrors((prev) => ({
+			...prev,
+			authorName: result.success ? undefined : result.error.issues[0]?.message,
+		}));
+	};
+
+	// RichTextEditor is contentEditable, so keystrokes can't be intercepted to
+	// block double spaces there — length/space rules are still validated live.
+	const handleBodyChange = (html: string) => {
+		setBody(html);
+		const result = blogSchema.shape.body.safeParse(html);
+		setFieldErrors((prev) => ({
+			...prev,
+			body: result.success ? undefined : result.error.issues[0]?.message,
+		}));
+	};
 
 	const handleImageChange = async (e: ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files?.[0];
@@ -82,6 +137,15 @@ export default function BlogForm({
 		if (fileInputRef.current) fileInputRef.current.value = "";
 	};
 
+	const isFormInvalid =
+		Boolean(fieldErrors.title) ||
+		Boolean(fieldErrors.subtitle) ||
+		Boolean(fieldErrors.authorName) ||
+		Boolean(fieldErrors.body) ||
+		title.trim().length === 0 ||
+		authorName.trim().length === 0 ||
+		body.trim().length < 10;
+
 	return (
 		<div className="flex flex-col h-full overflow-auto pb-8 px-7">
 			<form action={formAction} className="space-y-8">
@@ -89,7 +153,6 @@ export default function BlogForm({
 					<input type="hidden" name="id" value={initialData.id} />
 				)}
 				<input type="hidden" name="imageUrl" value={imageUrl} />
-				<input type="hidden" name="body" value={body} />
 
 				{/* ── Section 1: Basic Info ───────────────────── */}
 				<div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -104,13 +167,14 @@ export default function BlogForm({
 							id="title-input"
 							name="title"
 							type="text"
-							defaultValue={initialData?.title ?? ""}
+							value={title}
+							onChange={handleTitleChange}
 							className="w-full rounded-md border border-gray-400 px-3 py-2 text-xs font-mono focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
 							placeholder="Enter title"
 						/>
-						{state?.error?.title && (
+						{fieldErrors.title && (
 							<p className="text-xs text-red-500 font-mono">
-								{state.error.title[0]}
+								{fieldErrors.title}
 							</p>
 						)}
 					</div>
@@ -126,13 +190,14 @@ export default function BlogForm({
 							id="author-input"
 							name="authorName"
 							type="text"
-							defaultValue={initialData?.authorName ?? ""}
+							value={authorName}
+							onChange={handleAuthorNameChange}
 							className="w-full rounded-md border border-gray-400 px-3 py-2 text-xs font-mono focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
 							placeholder="Writer's name..."
 						/>
-						{state?.error?.authorName && (
+						{fieldErrors.authorName && (
 							<p className="text-xs text-red-500 font-mono">
-								{state.error.authorName[0]}
+								{fieldErrors.authorName}
 							</p>
 						)}
 					</div>
@@ -178,11 +243,17 @@ export default function BlogForm({
 							<textarea
 								id="subtitle-input"
 								name="subtitle"
-								rows={4}
-								defaultValue={initialData?.subtitle ?? ""}
+								rows={3}
+								value={subtitle}
+								onChange={handleSubtitleChange}
 								className="w-full rounded-md border border-gray-400 px-3 py-2 text-xs font-mono focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500 resize-none"
 								placeholder="Article hook..."
 							/>
+							{fieldErrors.subtitle && (
+								<p className="text-xs text-red-500 font-mono">
+									{fieldErrors.subtitle}
+								</p>
+							)}
 						</div>
 					</div>
 
@@ -259,11 +330,10 @@ export default function BlogForm({
 					<label className="text-xs font-semibold font-mono text-gray-600">
 						Body <span className="text-red-500">*</span>
 					</label>
-					<RichTextEditor content={body} onChange={setBody} />
-					{state?.error?.body && (
-						<p className="text-xs text-red-500 font-mono">
-							{state.error.body[0]}
-						</p>
+					<input type="hidden" name="body" value={body} />
+					<RichTextEditor content={body} onChange={handleBodyChange} />
+					{fieldErrors.body && (
+						<p className="text-xs text-red-500 font-mono">{fieldErrors.body}</p>
 					)}
 				</div>
 
@@ -281,7 +351,7 @@ export default function BlogForm({
 						type="submit"
 						variant="green"
 						className="cursor-pointer"
-						disabled={isPending || uploading}
+						disabled={isPending || uploading || isFormInvalid}
 					>
 						{isPending
 							? "Saving..."

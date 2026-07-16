@@ -1,9 +1,16 @@
 "use client";
 
 import { AlertCircle, MessageCircle } from "lucide-react";
-import { useActionState, useEffect, useRef } from "react";
+import {
+	type ChangeEvent,
+	useActionState,
+	useEffect,
+	useRef,
+	useState,
+} from "react";
 import { toast } from "sonner";
 import { addComment } from "@/actions/comment-action";
+import { commentSchema, sanitizeInput } from "@/lib/validations";
 
 interface Comment {
 	id: string;
@@ -15,6 +22,11 @@ interface Comment {
 interface CommentSectionProps {
 	blogId: string;
 	initialComments: Comment[];
+}
+
+interface FieldErrors {
+	authorName?: string;
+	body?: string;
 }
 
 function FieldError({ message }: { message: string }) {
@@ -38,15 +50,46 @@ export default function CommentSection({
 	const [state, formAction, isPending] = useActionState(addComment, null);
 	const formRef = useRef<HTMLFormElement>(null);
 
+	const [authorName, setAuthorName] = useState("");
+	const [body, setBody] = useState("");
+	const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
+
 	useEffect(() => {
 		if (state?.success) {
 			formRef.current?.reset();
+			setAuthorName("");
+			setBody("");
+			setFieldErrors({});
 			toast.success("Comment submitted! It'll appear once approved.");
-		} else if (state?.error && typeof state.error === "object") {
-			const firstError = Object.values(state.error).flat()[0];
-			if (firstError) toast.error(firstError as string);
 		}
+		// No toast on validation errors — those render inline below each field.
 	}, [state]);
+
+	const handleAuthorNameChange = (e: ChangeEvent<HTMLInputElement>) => {
+		const sanitized = sanitizeInput(e.target.value, 80);
+		setAuthorName(sanitized);
+		const result = commentSchema.shape.authorName.safeParse(sanitized);
+		setFieldErrors((prev) => ({
+			...prev,
+			authorName: result.success ? undefined : result.error.issues[0]?.message,
+		}));
+	};
+
+	const handleBodyChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+		const sanitized = sanitizeInput(e.target.value, 2000);
+		setBody(sanitized);
+		const result = commentSchema.shape.body.safeParse(sanitized);
+		setFieldErrors((prev) => ({
+			...prev,
+			body: result.success ? undefined : result.error.issues[0]?.message,
+		}));
+	};
+
+	const isFormInvalid =
+		Boolean(fieldErrors.authorName) ||
+		Boolean(fieldErrors.body) ||
+		authorName.trim().length === 0 ||
+		body.trim().length < 10;
 
 	return (
 		<div className="mb-16">
@@ -78,11 +121,17 @@ export default function CommentSection({
 								id="authorName"
 								name="authorName"
 								type="text"
+								value={authorName}
+								onChange={handleAuthorNameChange}
 								placeholder="Your name"
 								className="w-full rounded-md border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 px-2.5 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-cyan-500"
 							/>
-							{state?.error?.authorName && (
-								<FieldError message={state.error.authorName[0]} />
+							{fieldErrors.authorName ? (
+								<FieldError message={fieldErrors.authorName} />
+							) : (
+								state?.error?.authorName && (
+									<FieldError message={state.error.authorName[0]} />
+								)
 							)}
 						</div>
 
@@ -97,17 +146,23 @@ export default function CommentSection({
 								id="body"
 								name="body"
 								rows={3}
+								value={body}
+								onChange={handleBodyChange}
 								placeholder="Write a comment..."
 								className="w-full rounded-md border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 px-2.5 py-1.5 text-xs resize-y focus:outline-none focus:ring-1 focus:ring-cyan-500"
 							/>
-							{state?.error?.body && (
-								<FieldError message={state.error.body[0]} />
+							{fieldErrors.body ? (
+								<FieldError message={fieldErrors.body} />
+							) : (
+								state?.error?.body && (
+									<FieldError message={state.error.body[0]} />
+								)
 							)}
 						</div>
 
 						<button
 							type="submit"
-							disabled={isPending}
+							disabled={isPending || isFormInvalid}
 							className="inline-flex items-center text-xs font-semibold text-white bg-slate-900 dark:bg-cyan-600 rounded-md px-3.5 py-1.5 hover:opacity-90 transition-opacity disabled:opacity-50"
 						>
 							{isPending ? "Posting..." : "Post Comment"}

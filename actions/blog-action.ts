@@ -1,18 +1,9 @@
 "use server";
 import { desc, eq, isNotNull, isNull } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
-import { z } from "zod";
 import { db } from "@/db/drizzle";
 import { blogs } from "@/db/schema";
-
-const blogSchema = z.object({
-	title: z.string().trim().min(1, "Title is required").max(200),
-	subtitle: z.string().trim().max(200).optional(),
-	body: z.string().trim().min(10, "Body must be at least 10 characters"),
-	authorName: z.string().trim().min(1, "Author is required").max(100),
-	categoryId: z.string().uuid("Please select a category"),
-	imageUrl: z.string().optional(),
-});
+import { blogSchema } from "@/lib/validations";
 
 function slugify(title: string) {
 	return title
