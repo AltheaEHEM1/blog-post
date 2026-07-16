@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { Search } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 interface Category {
 	id: string;
@@ -43,9 +43,10 @@ export default function BlogCategoryFilter({
 	}, [query, category, initialQuery, router]);
 
 	const chipClass = (active: boolean) =>
-		`px-4 py-2 text-[11px] sm:text-xs font-mono border rounded-sm transition-colors whitespace-nowrap md:whitespace-normal md:break-words md:text-left ${active
-			? "bg-cyan-600 text-white border-cyan-600"
-			: "border-slate-700 text-slate-400 hover:border-cyan-500/60 hover:text-cyan-400"
+		`px-4 py-2 text-[11px] sm:text-xs font-mono border rounded-sm transition-colors whitespace-nowrap md:whitespace-normal md:break-words md:text-left ${
+			active
+				? "bg-cyan-600 text-white border-cyan-600"
+				: "border-slate-700 text-slate-400 hover:border-cyan-500/60 hover:text-cyan-400"
 		}`;
 
 	return (

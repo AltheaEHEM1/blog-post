@@ -1,7 +1,7 @@
 "use client";
 
+import { animate, motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import { motion, animate } from "framer-motion";
 import BlogCarousel from "@/app/blog/blog-carousel";
 
 interface Post {

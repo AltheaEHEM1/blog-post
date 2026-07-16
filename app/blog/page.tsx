@@ -1,8 +1,8 @@
 import { getActiveBlogs } from "@/actions/blog-action";
 import { getActiveCategories } from "@/actions/category-action";
+import BlogCategoryFilter from "@/app/blog/blog-category-filter";
 import BlogPageContent from "@/app/blog/blog-page-content";
 import BlogPostsGrid from "@/app/blog/blog-post-card";
-import BlogCategoryFilter from "@/app/blog/blog-category-filter";
 
 export default async function Blog({
 	searchParams,
@@ -22,13 +22,16 @@ export default async function Blog({
 		const matchesCategory = category ? post.category?.slug === category : true;
 		const matchesQuery = q
 			? post.title.toLowerCase().includes(q) ||
-			post.category?.name.toLowerCase().includes(q)
+				post.category?.name.toLowerCase().includes(q)
 			: true;
 		return matchesCategory && matchesQuery;
 	});
 
 	const latestPosts = [...allPosts]
-		.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+		.sort(
+			(a, b) =>
+				new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+		)
 		.slice(0, 5);
 
 	return (
@@ -39,7 +42,6 @@ export default async function Blog({
 			{/* Content segment with uniform spacing constraints */}
 			<div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
 				<div className="flex flex-col md:flex-row gap-6 lg:gap-8 mt-6 sm:mt-10 items-start">
-
 					{/* Category Filter and Search Section */}
 					<div className="w-full md:w-52 lg:w-56 flex-shrink-0">
 						<BlogCategoryFilter
