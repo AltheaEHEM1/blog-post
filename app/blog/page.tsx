@@ -1,7 +1,8 @@
 import { getActiveBlogs } from "@/actions/blog-action";
 import { getActiveCategories } from "@/actions/category-action";
+import BlogCarousel from "@/app/blog/blog-carousel";
 import BlogCategoryFilter from "@/app/blog/blog-category-filter";
-import BlogPageContent from "@/app/blog/blog-page-content";
+import BlogHeader from "@/app/blog/blog-header";
 import BlogPostsGrid from "@/app/blog/blog-post-card";
 
 export default async function Blog({
@@ -35,14 +36,17 @@ export default async function Blog({
 		.slice(0, 5);
 
 	return (
-		<div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col w-full overflow-hidden">
-			{/* Hero + carousel */}
-			<BlogPageContent latestPosts={latestPosts} />
+		<div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col w-full">
+			{/* Sticky header — now a direct sibling of everything else on the page */}
+			<BlogHeader category={category} initialQuery={params.q ?? ""} />
+
+			{/* Carousel */}
+			<BlogCarousel posts={latestPosts} />
 
 			{/* Content segment with uniform spacing constraints */}
 			<div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
-				<div className="flex flex-col md:flex-row gap-6 lg:gap-8 mt-6 sm:mt-10 items-start">
-					{/* Category Filter and Search Section */}
+				<div className="flex flex-col md:flex-row gap-6 lg:gap-8 mt-1 sm:mt-2 items-start">
+					{/* Category Filter Section (chips only) */}
 					<div className="w-full md:w-52 lg:w-56 flex-shrink-0">
 						<BlogCategoryFilter
 							categories={categories}
