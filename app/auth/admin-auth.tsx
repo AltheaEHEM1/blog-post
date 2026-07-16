@@ -1,7 +1,7 @@
 "use client";
 
 import { Eye, EyeOff, Lock, Mail } from "lucide-react";
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useState } from "react";
 import { z } from "zod";
 import { login } from "@/actions/auth-action";
 
@@ -16,7 +16,6 @@ const loginSchema = z.object({
 	password: z.string().min(1, "Password is required"),
 });
 
-type FieldErrors = { email?: string; password?: string };
 type TouchedFields = { email: boolean; password: boolean };
 
 function validateField(field: keyof typeof loginSchema.shape, value: string) {
@@ -33,16 +32,12 @@ export default function AdminAuth() {
 		email: false,
 		password: false,
 	});
-	const [clientErrors, setClientErrors] = useState<FieldErrors>({});
-
-	useEffect(() => {
-		setClientErrors({
-			email: touched.email ? validateField("email", values.email) : undefined,
-			password: touched.password
-				? validateField("password", values.password)
-				: undefined,
-		});
-	}, [values, touched]);
+	const clientErrors = {
+		email: touched.email ? validateField("email", values.email) : undefined,
+		password: touched.password
+			? validateField("password", values.password)
+			: undefined,
+	};
 
 	const handleChange =
 		(field: "email" | "password") =>

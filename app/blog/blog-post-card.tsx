@@ -44,8 +44,7 @@ const BlogPostsGrid = ({ blogPosts }: { blogPosts: Post[] }) => {
 	}
 
 	return (
-		/* Fewer columns + taller aspect ratio = bigger cards overall */
-		<div className="grid grid-cols-1 xs:grid-cols-2 xl:grid-cols-3 gap-5 w-full min-h-[300px]">
+		<div className="grid grid-cols-1 xs:grid-cols-2 xl:grid-cols-3 gap-5 w-full min-h-75">
 			<AnimatePresence mode="popLayout">
 				{blogPosts.map((post, i) => {
 					const tint = TINTS[i % TINTS.length];
@@ -82,9 +81,8 @@ const BlogPostsGrid = ({ blogPosts }: { blogPosts: Post[] }) => {
 									</div>
 								)}
 
-								{/* Shading tint overlay */}
 								<div
-									className={`absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t ${tint} pointer-events-none`}
+									className={`absolute inset-x-0 bottom-0 h-2/3 bg-linear-to-t ${tint} pointer-events-none`}
 								/>
 
 								<div className="absolute bottom-0 left-0 right-0 p-4 sm:p-5 flex flex-col gap-3 z-10">

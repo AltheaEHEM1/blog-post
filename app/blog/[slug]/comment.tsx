@@ -192,7 +192,7 @@ export default function CommentSection({
 					</form>
 				</div>
 
-				{/* RIGHT: Comments list */}
+				{/*  Comments list */}
 				<div className="min-w-0">
 					{initialComments.length === 0 ? (
 						<div className="border border-dashed border-slate-300 dark:border-slate-700 rounded-lg p-6 text-center">

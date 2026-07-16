@@ -1,12 +1,8 @@
 import { z } from "zod";
 
-/*  Shared helpers */
-
 export const noConsecutiveSpaces = (_message: string) => (val: string) =>
 	!/ {2,}/.test(val);
 
-// Collapses 2+ consecutive spaces into one, and hard-caps length.
-// Call this on every keystroke so invalid input never lands in the field.
 export function sanitizeInput(value: string, maxLength: number) {
 	const collapsed = value.replace(/ {2,}/g, " ");
 	return collapsed.length > maxLength

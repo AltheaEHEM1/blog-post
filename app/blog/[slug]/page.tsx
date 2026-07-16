@@ -45,7 +45,6 @@ export default async function IndividualBlog({
 							{post.title.toUpperCase()}
 						</div>
 					</FadeInUp>
-
 				</div>
 			</div>
 			<article className="w-full px-6 mx-auto max-w-300">
@@ -111,14 +110,15 @@ export default async function IndividualBlog({
 				{/* Body Content */}
 				<FadeInUp delay={0.4} className="w-full">
 					<div
-						className="max-w-[1400px] text-base leading-relaxed text-slate-700 dark:text-slate-300 [word-break:break-word] hyphens-auto [&_p]:text-justify [&_p]:my-3 [&_strong]:font-bold [&_b]:font-bold [&_em]:italic [&_i]:italic [&_u]:underline [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:my-3 [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:my-3 [&_li]:my-1 [&_h1]:text-2xl [&_h1]:font-bold [&_h1]:my-4 [&_h2]:text-xl [&_h2]:font-bold [&_h2]:my-3 [&_h3]:text-lg [&_h3]:font-bold [&_h3]:my-2"
+						className="max-w-350 text-base leading-relaxed text-slate-700 dark:text-slate-300 [word-break:break-word] hyphens-auto [&_p]:text-justify [&_p]:my-3 [&_strong]:font-bold [&_b]:font-bold [&_em]:italic [&_i]:italic [&_u]:underline [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:my-3 [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:my-3 [&_li]:my-1 [&_h1]:text-2xl [&_h1]:font-bold [&_h1]:my-4 [&_h2]:text-xl [&_h2]:font-bold [&_h2]:my-3 [&_h3]:text-lg [&_h3]:font-bold [&_h3]:my-2"
+						// biome-ignore lint/security/noDangerouslySetInnerHtml: We intentionally render the blog post HTML content here.
 						dangerouslySetInnerHTML={{ __html: post.body }}
 					/>
 				</FadeInUp>
 
 				{/* Comments */}
 				<FadeInUp delay={0.45} className="w-full">
-					<div className="max-w-[1400px] mt-12 pt-12 border-t border-slate-200 dark:border-slate-800">
+					<div className="max-w- mt-12 pt-12 border-t border-slate-200 dark:border-slate-800">
 						<CommentSection blogId={post.id} initialComments={comments} />
 					</div>
 				</FadeInUp>

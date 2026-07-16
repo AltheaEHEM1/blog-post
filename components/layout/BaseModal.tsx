@@ -42,7 +42,6 @@ export default function BaseModal({
 				}}
 			/>
 
-			{/* Modal Container */}
 			<div
 				className="relative z-50 flex max-h-[70vh] w-full flex-col overflow-hidden rounded-xl bg-white shadow-2xl"
 				style={{ maxWidth: width }}
@@ -68,12 +67,10 @@ export default function BaseModal({
 					</button>
 				</div>
 
-				{/* Scrollable Body */}
 				<div className="flex-1 overflow-y-auto px-6 py-4 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
 					{children}
 				</div>
 
-				{/* Sticky Footer */}
 				{footer && (
 					<div className="flex shrink-0 justify-end gap-3 border-t border-gray-200 p-4">
 						{footer}

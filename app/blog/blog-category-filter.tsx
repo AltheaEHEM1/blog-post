@@ -61,7 +61,6 @@ export default function BlogCategoryFilter({
 				Categories
 			</h2>
 
-			{/* Scrollable list for smaller viewports, stacked list for larger screens */}
 			<motion.div
 				variants={containerVariants}
 				initial="hidden"

@@ -12,7 +12,6 @@ export default function AuthPage() {
 				backgroundBlendMode: "overlay",
 			}}
 		>
-			{/* Ambient blurred shapes for depth, echoing the reference art */}
 			<div className="pointer-events-none absolute -left-32 -bottom-32 w-96 h-96 bg-emerald-400/30 rounded-full blur-3xl" />
 			<div className="pointer-events-none absolute -right-32 top-1/4 w-md h-112 bg-cyan-400/30 rounded-full blur-3xl" />
 			<div className="absolute inset-0 bg-linear-to-b from-black/30 via-black/20 to-black/50 z-0" />

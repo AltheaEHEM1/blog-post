@@ -22,7 +22,6 @@ export default function BlogSearchBar({
 	const router = useRouter();
 	const [query, setQuery] = useState(initialQuery ?? "");
 
-	// Debounced route update when search query changes
 	useEffect(() => {
 		const timer = setTimeout(() => {
 			const trimmed = query.trim();

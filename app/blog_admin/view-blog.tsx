@@ -54,9 +54,8 @@ export default function ViewBlog({ data }: ViewBlogProps) {
 				</p>
 			)}
 
-			{/* Body — rendered as rich HTML (bold, italic, headings, lists, alignment) */}
 			<div
-				className="mt-8 text-sm prose font-mono prose-green max-w-none text-gray-700 break-words leading-relaxed"
+				className="mt-8 text-sm prose font-mono prose-green max-w-none text-gray-700 wrap-break-words leading-relaxed"
 				// biome-ignore lint/security/noDangerouslySetInnerHtml: content authored by trusted admin only
 				dangerouslySetInnerHTML={{ __html: data.body }}
 			/>

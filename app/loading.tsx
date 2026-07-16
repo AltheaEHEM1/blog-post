@@ -36,7 +36,10 @@ export default function Loading() {
 					{/* Thumbnail selector skeleton */}
 					<div className="hidden sm:flex absolute bottom-4 right-4 lg:right-10 gap-3 z-10">
 						{[1, 2, 3, 4].map((i) => (
-							<Skeleton key={i} className="w-16 lg:w-20 h-24 lg:h-28 rounded-xl bg-slate-800" />
+							<Skeleton
+								key={i}
+								className="w-16 lg:w-20 h-24 lg:h-28 rounded-xl bg-slate-800"
+							/>
 						))}
 					</div>
 				</div>
@@ -46,15 +49,18 @@ export default function Loading() {
 			<div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
 				<div className="flex flex-col md:flex-row gap-6 lg:gap-8 mt-1 sm:mt-2 items-start">
 					{/* Category Filter Section skeleton */}
-					<div className="w-full md:w-52 lg:w-56 flex-shrink-0 flex flex-wrap gap-2">
+					<div className="w-full md:w-52 lg:w-56 shrink-0 flex flex-wrap gap-2">
 						{[1, 2, 3, 4, 5].map((i) => (
-							<Skeleton key={i} className="h-9 w-20 sm:w-24 lg:w-28 rounded-full bg-slate-800" />
+							<Skeleton
+								key={i}
+								className="h-9 w-20 sm:w-24 lg:w-28 rounded-full bg-slate-800"
+							/>
 						))}
 					</div>
 
 					{/* Posts Layout Grid skeleton */}
-					<div className="w-full flex-grow min-w-0">
-						<div className="grid grid-cols-1 xs:grid-cols-2 xl:grid-cols-3 gap-5 w-full min-h-[300px]">
+					<div className="w-full grow min-w-0">
+						<div className="grid grid-cols-1 xs:grid-cols-2 xl:grid-cols-3 gap-5 w-full min-h-75">
 							{[1, 2, 3, 4, 5, 6].map((i) => (
 								<div
 									key={i}

@@ -38,12 +38,11 @@ export default function BlogCarousel({ posts }: { posts: Post[] }) {
 		[total],
 	);
 
-	// Autoplay: progress every 7 seconds unless hovered
 	useEffect(() => {
 		if (isHovered || total === 0) return;
 		const timer = setInterval(() => {
 			go("next");
-		}, 7000);
+		}, 3000);
 		return () => clearInterval(timer);
 	}, [isHovered, total, go]);
 
@@ -111,7 +110,6 @@ export default function BlogCarousel({ posts }: { posts: Post[] }) {
 								transition={{ duration: 0.5, ease: "circOut" }}
 								className="pointer-events-auto space-y-5"
 							>
-								{/* Mono Meta Header */}
 								<div className="flex items-center gap-3 font-mono text-[10px] sm:text-xs uppercase tracking-widest">
 									{isNew(active.createdAt) && (
 										<span className="px-2 py-0.5 border border-cyan-400 text-cyan-400 bg-cyan-400/10">
@@ -130,7 +128,7 @@ export default function BlogCarousel({ posts }: { posts: Post[] }) {
 									</span>
 								</div>
 
-								{/* Main Title - Mono Font (Reduced Size) */}
+								{/* Main Title */}
 								<h3 className="font-mono text-2xl sm:text-3xl lg:text-4xl font-bold uppercase leading-[1.1] tracking-tight text-white drop-shadow-[0_0_10px_rgba(34,211,238,0.2)]">
 									{active.title}
 								</h3>
@@ -142,7 +140,6 @@ export default function BlogCarousel({ posts }: { posts: Post[] }) {
 									</p>
 								)}
 
-								{/* Interaction Button */}
 								<div className="pt-4">
 									<Link
 										href={`/blog/${active.slug}`}
@@ -159,7 +156,6 @@ export default function BlogCarousel({ posts }: { posts: Post[] }) {
 						</AnimatePresence>
 					</div>
 
-					{/* Prev / next + counter, bottom-left */}
 					<div className="absolute bottom-4 left-4 sm:left-8 lg:left-10 flex items-center gap-3 z-10">
 						<button
 							type="button"
@@ -247,7 +243,7 @@ export default function BlogCarousel({ posts }: { posts: Post[] }) {
 				</div>
 			</div>
 
-			{/* Thumbnail selector (mobile) */}
+			{/* Thumbnail selector */}
 			<div className="sm:hidden flex gap-2 mt-3 overflow-x-auto pb-2 px-4 -mx-4 scrollbar-thin scrollbar-thumb-slate-700">
 				{posts.map((post, i) => {
 					const isActive = i === activeIndex;

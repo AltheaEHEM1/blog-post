@@ -42,7 +42,6 @@ export default function FormModal({
 			);
 			onClose();
 		}
-		// No toast on validation errors — those render inline below each field.
 	}, [state, onClose, initialData]);
 
 	const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {

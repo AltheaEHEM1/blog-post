@@ -66,11 +66,8 @@ export default function BlogForm({
 			);
 			onDone();
 		}
-		// No toast on validation errors — those render inline below each field.
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [state, onDone, initialData]);
 
-	// ── Live validation, field by field, against blogSchema.shape.<field> ──
 	const handleTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
 		const sanitized = sanitizeInput(e.target.value, 200);
 		setTitle(sanitized);
@@ -157,7 +154,6 @@ export default function BlogForm({
 				)}
 				<input type="hidden" name="imageUrl" value={imageUrl} />
 
-				{/* ── Section 1: Basic Info ───────────────────── */}
 				<div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 					<div className="md:col-span-2 flex flex-col gap-1.5">
 						<label
@@ -206,7 +202,6 @@ export default function BlogForm({
 					</div>
 				</div>
 
-				{/* ── Section 2: Categorization, Hook, Cover Image ── */}
 				<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 					<div className="flex flex-col gap-4">
 						<div className="flex flex-col gap-1.5">
@@ -260,7 +255,6 @@ export default function BlogForm({
 						</div>
 					</div>
 
-					{/* Cover Image */}
 					<div className="flex flex-col gap-1.5">
 						<span className="text-xs font-semibold font-mono text-gray-700">
 							Cover Image
@@ -289,10 +283,11 @@ export default function BlogForm({
 						) : (
 							<label
 								htmlFor="cover-image"
-								className={`relative border border-dashed border-gray-400 rounded-lg hover:border-green-400 hover:bg-green-50/10 transition-colors h-[150px] flex flex-col items-center justify-center gap-2 ${uploading
-									? "pointer-events-none opacity-60 cursor-not-allowed"
-									: "cursor-pointer"
-									}`}
+								className={`relative border border-dashed border-gray-400 rounded-lg hover:border-green-400 hover:bg-green-50/10 transition-colors h-37.5 flex flex-col items-center justify-center gap-2 ${
+									uploading
+										? "pointer-events-none opacity-60 cursor-not-allowed"
+										: "cursor-pointer"
+								}`}
 							>
 								{uploading ? (
 									<>
@@ -327,7 +322,6 @@ export default function BlogForm({
 					</div>
 				</div>
 
-				{/* ── Section 3: Content Body (Rich Text Editor) ── */}
 				<div className="flex flex-col gap-1.5">
 					<span className="text-xs font-semibold font-mono text-gray-600">
 						Body <span className="text-red-500">*</span>
@@ -339,7 +333,6 @@ export default function BlogForm({
 					)}
 				</div>
 
-				{/* ── Footer Actions ───────────────────────────── */}
 				<div className="flex justify-end gap-3">
 					<Button
 						type="button"

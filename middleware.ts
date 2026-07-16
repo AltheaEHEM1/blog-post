@@ -5,7 +5,7 @@ const SESSION_COOKIE = "admin_session";
 
 export function middleware(request: NextRequest) {
 	const pathname = request.nextUrl.pathname;
-	
+
 	const adminPaths = ["/blog_admin", "/category", "/comment"];
 	const isAdminRoute = adminPaths.some((path) => pathname.startsWith(path));
 

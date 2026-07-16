@@ -50,7 +50,6 @@ export default function BlogHeader({
 			className="sticky top-0 z-50 w-full bg-slate-950/85 backdrop-blur-md border-b border-white/10 py-3 px-4 shadow-lg"
 		>
 			<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4 max-w-7xl mx-auto">
-				{/* Left: Animated title */}
 				<h1 className="font-mono text-sm sm:text-base md:text-lg font-bold text-white tracking-tighter drop-shadow-[0_0_10px_rgba(34,211,238,0.5)] inline-flex items-center">
 					{renderStyledH1(h1Text)}
 					<motion.span
@@ -62,7 +61,6 @@ export default function BlogHeader({
 					</motion.span>
 				</h1>
 
-				{/* Right: Search bar */}
 				<div className="w-full sm:w-auto">
 					<BlogSearchBar category={category} initialQuery={initialQuery} />
 				</div>
