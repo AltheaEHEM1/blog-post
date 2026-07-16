@@ -6,7 +6,7 @@ import BlogHeader from "@/app/blog/blog-header";
 import BlogPostsGrid from "@/app/blog/blog-post-card";
 
 //import Forbidden from "@/app/forbidden";
-import Error from "@/app/error";
+//import Error from "@/app/error";
 
 export default async function Blog({
 	searchParams,
@@ -24,13 +24,13 @@ export default async function Blog({
 
 	// Temporarily returning the Forbidden component so you can preview it directly
 	//return <Forbidden />;
-	return <Error />;
+	//return <Error />;
 
 	const filteredPosts = allPosts.filter((post) => {
 		const matchesCategory = category ? post.category?.slug === category : true;
 		const matchesQuery = q
 			? post.title.toLowerCase().includes(q) ||
-			post.category?.name.toLowerCase().includes(q)
+				post.category?.name.toLowerCase().includes(q)
 			: true;
 		return matchesCategory && matchesQuery;
 	});

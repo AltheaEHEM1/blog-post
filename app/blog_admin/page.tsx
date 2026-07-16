@@ -15,5 +15,5 @@ export default async function BlogAdminPage() {
 	//return <Forbidden />;
 	//return <Error />;
 
-	//return <BlogAdmin initialBlogs={blogs} categories={categories} />;
+	return <BlogAdmin initialBlogs={blogs} categories={categories} />;
 }
