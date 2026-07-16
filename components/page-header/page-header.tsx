@@ -31,7 +31,6 @@ export function PageHeader({
 				</h1>
 				{titleAction && <div className="shrink-0">{titleAction}</div>}
 			</div>
-			{/* Negative margin pulls the p closer to the h3 */}
 			<p className="-mt-1 text-slate-500 text-[12px] leading-relaxed font-mono">
 				{description}
 			</p>

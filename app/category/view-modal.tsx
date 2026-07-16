@@ -20,7 +20,7 @@ export default function ViewModal({ opened, onClose, data }: ViewModalProps) {
 							<span className="font-semibold text-gray-700 w-28 shrink-0">
 								Description:
 							</span>
-							<p className="flex-1 min-w-0 break-words text-gray-600 leading-relaxed">
+							<p className="flex-1 min-w-0 wrap-break-words text-gray-600 leading-relaxed">
 								{data.description}
 							</p>
 						</div>

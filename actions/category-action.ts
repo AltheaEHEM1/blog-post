@@ -1,14 +1,9 @@
 "use server";
 import { desc, eq, isNotNull, isNull } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
-import { z } from "zod";
 import { db } from "@/db/drizzle";
 import { categories } from "@/db/schema";
-
-const categorySchema = z.object({
-	name: z.string().trim().min(1, "Category name is required").max(50),
-	description: z.string().trim().max(300).optional(),
-});
+import { categorySchema } from "@/lib/validations";
 
 function slugify(name: string) {
 	return name

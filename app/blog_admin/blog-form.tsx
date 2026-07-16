@@ -1,18 +1,36 @@
 "use client";
 
-import { ImageIcon, X } from "lucide-react";
+import { ImageIcon, Loader2, X } from "lucide-react";
 import Image from "next/image";
-import { type ChangeEvent, useActionState, useEffect, useState } from "react";
+import {
+	type ChangeEvent,
+	useActionState,
+	useEffect,
+	useRef,
+	useState,
+} from "react";
 import { toast } from "sonner";
 import { createBlog, updateBlog } from "@/actions/blog-action";
+import { uploadImage } from "@/actions/upload-action";
 import { Button } from "@/components/button/button";
+import RichTextEditor from "@/components/rich-text-editor/rich-text-editor";
+import { blogSchema, sanitizeInput } from "@/lib/validations";
 import type { BlogPost, Category } from "./blog-admin";
+
+//import Forbidden from "@/app/forbidden";
 
 interface BlogFormProps {
 	initialData?: BlogPost;
 	categories: Category[];
 	onDone: () => void;
 	onCancel: () => void;
+}
+
+interface FieldErrors {
+	title?: string;
+	subtitle?: string;
+	authorName?: string;
+	body?: string;
 }
 
 export default function BlogForm({
@@ -23,9 +41,21 @@ export default function BlogForm({
 }: BlogFormProps) {
 	const action = initialData ? updateBlog : createBlog;
 	const [state, formAction, isPending] = useActionState(action, null);
-	const [imagePreview, setImagePreview] = useState<string>(
-		initialData?.imageUrl ?? "",
-	);
+
+	const [imageUrl, setImageUrl] = useState<string>(initialData?.imageUrl ?? "");
+	const [uploading, setUploading] = useState(false);
+
+	const [title, setTitle] = useState(initialData?.title ?? "");
+	const [subtitle, setSubtitle] = useState(initialData?.subtitle ?? "");
+	const [authorName, setAuthorName] = useState(initialData?.authorName ?? "");
+	const [body, setBody] = useState<string>(initialData?.body ?? "");
+
+	const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
+
+	const fileInputRef = useRef<HTMLInputElement>(null);
+
+	// Temporarily returning the Forbidden component so you can preview it directly
+	//return <Forbidden />;
 
 	useEffect(() => {
 		if (state?.success) {
@@ -35,27 +65,86 @@ export default function BlogForm({
 					: "Blog post published successfully",
 			);
 			onDone();
-		} else if (state?.error) {
-			const firstError = Object.values(state.error).flat()[0];
-			if (firstError) toast.error(firstError as string);
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [state, onDone, initialData]);
 
-	const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
-		const file = e.target.files?.[0] ?? null;
-		if (file) {
-			const reader = new FileReader();
-			reader.onload = () => {
-				setImagePreview(reader.result as string);
-			};
-			reader.readAsDataURL(file);
+	const handleTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
+		const sanitized = sanitizeInput(e.target.value, 200);
+		setTitle(sanitized);
+		const result = blogSchema.shape.title.safeParse(sanitized);
+		setFieldErrors((prev) => ({
+			...prev,
+			title: result.success ? undefined : result.error.issues[0]?.message,
+		}));
+	};
+
+	const handleSubtitleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+		const sanitized = sanitizeInput(e.target.value, 200);
+		setSubtitle(sanitized);
+		const result = blogSchema.shape.subtitle.safeParse(sanitized);
+		setFieldErrors((prev) => ({
+			...prev,
+			subtitle: result.success ? undefined : result.error.issues[0]?.message,
+		}));
+	};
+
+	const handleAuthorNameChange = (e: ChangeEvent<HTMLInputElement>) => {
+		const sanitized = sanitizeInput(e.target.value, 80);
+		setAuthorName(sanitized);
+		const result = blogSchema.shape.authorName.safeParse(sanitized);
+		setFieldErrors((prev) => ({
+			...prev,
+			authorName: result.success ? undefined : result.error.issues[0]?.message,
+		}));
+	};
+
+	const handleBodyChange = (html: string) => {
+		setBody(html);
+		const result = blogSchema.shape.body.safeParse(html);
+		setFieldErrors((prev) => ({
+			...prev,
+			body: result.success ? undefined : result.error.issues[0]?.message,
+		}));
+	};
+
+	const handleImageChange = async (e: ChangeEvent<HTMLInputElement>) => {
+		const file = e.target.files?.[0];
+		if (!file) return;
+
+		setUploading(true);
+		try {
+			const uploadData = new FormData();
+			uploadData.append("file", file);
+			const result = await uploadImage(uploadData);
+
+			if (result.error) {
+				toast.error(result.error);
+				return;
+			}
+
+			setImageUrl(result.url ?? "");
+			toast.success("Image uploaded successfully");
+		} catch {
+			toast.error("Image upload failed — please try again");
+		} finally {
+			setUploading(false);
+			if (fileInputRef.current) fileInputRef.current.value = "";
 		}
 	};
 
 	const handleRemoveImage = () => {
-		setImagePreview("");
+		setImageUrl("");
+		if (fileInputRef.current) fileInputRef.current.value = "";
 	};
+
+	const isFormInvalid =
+		Boolean(fieldErrors.title) ||
+		Boolean(fieldErrors.subtitle) ||
+		Boolean(fieldErrors.authorName) ||
+		Boolean(fieldErrors.body) ||
+		title.trim().length === 0 ||
+		authorName.trim().length === 0 ||
+		body.trim().length < 10;
 
 	return (
 		<div className="flex flex-col h-full overflow-auto pb-8 px-7">
@@ -63,9 +152,8 @@ export default function BlogForm({
 				{initialData && (
 					<input type="hidden" name="id" value={initialData.id} />
 				)}
-				<input type="hidden" name="imageUrl" value={imagePreview} />
+				<input type="hidden" name="imageUrl" value={imageUrl} />
 
-				{/* Section 1: Basic Info */}
 				<div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 					<div className="md:col-span-2 flex flex-col gap-1.5">
 						<label
@@ -78,13 +166,14 @@ export default function BlogForm({
 							id="title-input"
 							name="title"
 							type="text"
-							defaultValue={initialData?.title ?? ""}
+							value={title}
+							onChange={handleTitleChange}
 							className="w-full rounded-md border border-gray-400 px-3 py-2 text-xs font-mono focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
 							placeholder="Enter title"
 						/>
-						{state?.error?.title && (
+						{fieldErrors.title && (
 							<p className="text-xs text-red-500 font-mono">
-								{state.error.title[0]}
+								{fieldErrors.title}
 							</p>
 						)}
 					</div>
@@ -100,14 +189,19 @@ export default function BlogForm({
 							id="author-input"
 							name="authorName"
 							type="text"
-							defaultValue={initialData?.authorName ?? ""}
+							value={authorName}
+							onChange={handleAuthorNameChange}
 							className="w-full rounded-md border border-gray-400 px-3 py-2 text-xs font-mono focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
 							placeholder="Writer's name..."
 						/>
+						{fieldErrors.authorName && (
+							<p className="text-xs text-red-500 font-mono">
+								{fieldErrors.authorName}
+							</p>
+						)}
 					</div>
 				</div>
 
-				{/* Section 2: Categorization and Hook */}
 				<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 					<div className="flex flex-col gap-4">
 						<div className="flex flex-col gap-1.5">
@@ -130,7 +224,13 @@ export default function BlogForm({
 									</option>
 								))}
 							</select>
+							{state?.error?.categoryId && (
+								<p className="text-xs text-red-500 font-mono">
+									{state.error.categoryId[0]}
+								</p>
+							)}
 						</div>
+
 						<div className="flex flex-col gap-1.5">
 							<label
 								className="text-xs font-semibold font-mono text-gray-600"
@@ -141,78 +241,98 @@ export default function BlogForm({
 							<textarea
 								id="subtitle-input"
 								name="subtitle"
-								rows={4}
-								defaultValue={initialData?.subtitle ?? ""}
+								rows={3}
+								value={subtitle}
+								onChange={handleSubtitleChange}
 								className="w-full rounded-md border border-gray-400 px-3 py-2 text-xs font-mono focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500 resize-none"
 								placeholder="Article hook..."
 							/>
+							{fieldErrors.subtitle && (
+								<p className="text-xs text-red-500 font-mono">
+									{fieldErrors.subtitle}
+								</p>
+							)}
 						</div>
 					</div>
 
-					{/* Cover Image Upload */}
 					<div className="flex flex-col gap-1.5">
-						<label
-							htmlFor="cover-image"
-							className="text-xs font-semibold font-mono text-gray-700"
-						>
+						<span className="text-xs font-semibold font-mono text-gray-700">
 							Cover Image
-						</label>
-						{imagePreview ? (
-							<div className="relative border border-gray-200 rounded-lg p-3 flex items-center gap-3 bg-gray-50/50 h-[100px]">
-								<Image
-									src={imagePreview}
-									alt="Cover preview"
-									className="object-cover rounded"
-									width={80}
-									height={56}
-								/>
-								<span className="text-xs font-mono text-gray-600 flex-1">
-									Cover Image Selected
-								</span>
+						</span>
+
+						{imageUrl ? (
+							<div className="relative border border-gray-200 rounded-lg overflow-hidden bg-gray-50">
+								<div className="relative w-full aspect-video">
+									<Image
+										src={imageUrl}
+										alt="Cover preview"
+										fill
+										className="object-cover"
+										sizes="(max-width: 768px) 100vw, 500px"
+									/>
+								</div>
 								<button
 									type="button"
 									onClick={handleRemoveImage}
-									className="p-1 rounded-full text-red-500 hover:bg-red-50 cursor-pointer"
+									className="absolute top-2 right-2 p-1.5 rounded-full bg-black/50 text-white hover:bg-black/70 transition-colors"
+									title="Remove image"
 								>
-									<X size={16} />
+									<X size={14} />
 								</button>
 							</div>
 						) : (
-							<div className="relative border border-dashed border-gray-400 rounded-lg hover:border-green-400 hover:bg-green-50/10 transition-colors h-[150px] flex flex-col items-center justify-center gap-2 cursor-pointer">
-								<ImageIcon size={24} className="text-gray-400" />
-								<span className="text-xs text-gray-500 font-mono">
-									Upload cover image
-								</span>
-								<input
-									type="file"
-									accept="image/*"
-									onChange={handleImageChange}
-									className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-								/>
-							</div>
+							<label
+								htmlFor="cover-image"
+								className={`relative border border-dashed border-gray-400 rounded-lg hover:border-green-400 hover:bg-green-50/10 transition-colors h-37.5 flex flex-col items-center justify-center gap-2 ${
+									uploading
+										? "pointer-events-none opacity-60 cursor-not-allowed"
+										: "cursor-pointer"
+								}`}
+							>
+								{uploading ? (
+									<>
+										<Loader2 size={24} className="text-gray-400 animate-spin" />
+										<span className="text-xs text-gray-500 font-mono">
+											Uploading to Blob...
+										</span>
+									</>
+								) : (
+									<>
+										<ImageIcon size={24} className="text-gray-400" />
+										<span className="text-xs text-gray-500 font-mono">
+											Click to upload cover image
+										</span>
+										<span className="text-[11px] text-gray-400 font-mono">
+											JPEG, PNG, WebP or GIF — max 5MB
+										</span>
+									</>
+								)}
+							</label>
 						)}
+
+						<input
+							id="cover-image"
+							ref={fileInputRef}
+							type="file"
+							accept="image/jpeg,image/png,image/webp,image/gif"
+							onChange={handleImageChange}
+							disabled={uploading}
+							className="hidden"
+						/>
 					</div>
 				</div>
 
-				{/* Section 3: Content Body */}
 				<div className="flex flex-col gap-1.5">
-					<label
-						className="text-xs font-semibold font-mono text-gray-600"
-						htmlFor="body-input"
-					>
+					<span className="text-xs font-semibold font-mono text-gray-600">
 						Body <span className="text-red-500">*</span>
-					</label>
-					<textarea
-						id="body-input"
-						name="body"
-						rows={12}
-						defaultValue={initialData?.body ?? ""}
-						className="w-full rounded-md border border-gray-400 px-3 py-2 text-xs font-mono focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500 leading-relaxed"
-						placeholder="Compose your article..."
-					/>
+					</span>
+					<input type="hidden" name="body" value={body} />
+					<RichTextEditor content={body} onChange={handleBodyChange} />
+					{fieldErrors.body && (
+						<p className="text-xs text-red-500 font-mono">{fieldErrors.body}</p>
+					)}
 				</div>
 
-				{/* Footer Actions */}
 				<div className="flex justify-end gap-3">
 					<Button
 						type="button"
@@ -226,13 +346,15 @@ export default function BlogForm({
 						type="submit"
 						variant="green"
 						className="cursor-pointer"
-						disabled={isPending}
+						disabled={isPending || uploading || isFormInvalid}
 					>
 						{isPending
 							? "Saving..."
-							: initialData
-								? "Update Post"
-								: "Publish Post"}
+							: uploading
+								? "Uploading image..."
+								: initialData
+									? "Update Post"
+									: "Publish Post"}
 					</Button>
 				</div>
 			</form>

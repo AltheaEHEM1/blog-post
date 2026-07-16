@@ -15,10 +15,8 @@ interface LeafConfig {
 }
 
 export default function BackgroundAdmin() {
-	// Start with no leaves on the server to avoid mismatched random values
 	const [leaves, setLeaves] = useState<LeafConfig[]>([]);
 
-	// Populate leaves only on the client after the component mounts
 	useEffect(() => {
 		const leafCount = 20;
 		const leafColors: string[] = [
@@ -41,10 +39,7 @@ export default function BackgroundAdmin() {
 	}, []);
 
 	return (
-		<div className="fixed inset-0 z-[-2] pointer-events-none overflow-hidden bg-background perspective:1000px">
-			<div className="absolute inset-0 bg-linear-to-b from-teal-50/20 via-transparent to-transparent" />
-			<div className="absolute inset-0 bg-radial-[circle_at_50%_30%] from-transparent via-transparent to-teal-pale/40 mix-blend-multiply" />
-
+		<div className="fixed inset-0 z-[-2] pointer-events-none overflow-hidden">
 			<style>{`
                 @keyframes realistic-fall {
                     0% {

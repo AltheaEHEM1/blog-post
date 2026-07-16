@@ -201,7 +201,7 @@ export default function CommentTable({ comments }: CommentTableProps) {
 				</div>
 
 				<div className="flex-1 overflow-auto border border-gray-200 rounded-b-md">
-					<table className="w-full min-w-[600px] text-left text-sm font-mono border-collapse table-fixed">
+					<table className="w-full min-w-150 text-left text-sm font-mono border-collapse table-fixed">
 						<thead className="bg-green-100 sticky top-0 z-10">
 							{table.getHeaderGroups().map((headerGroup) => (
 								<tr key={headerGroup.id}>
@@ -235,7 +235,7 @@ export default function CommentTable({ comments }: CommentTableProps) {
 									{row.getVisibleCells().map((cell) => (
 										<td
 											key={cell.id}
-											className={`p-4 text-gray-600 whitespace-normal break-words ${columnWidths[cell.column.id] || "w-auto"}`}
+											className={`p-4 text-gray-600 whitespace-normal wrap-reak-words ${columnWidths[cell.column.id] || "w-auto"}`}
 										>
 											{flexRender(
 												cell.column.columnDef.cell,
