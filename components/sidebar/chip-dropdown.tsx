@@ -22,7 +22,6 @@ export default function ChipDropdown({
 	const [isOpen, setIsOpen] = useState(false);
 	const dropdownRef = useRef<HTMLDivElement>(null);
 
-	// Close dropdown when clicking outside
 	useEffect(() => {
 		const handleClickOutside = (event: MouseEvent) => {
 			if (
@@ -38,7 +37,6 @@ export default function ChipDropdown({
 
 	return (
 		<div className="relative" ref={dropdownRef}>
-			{/* Trigger Button */}
 			<button
 				type="button"
 				onClick={() => setIsOpen(!isOpen)}
@@ -54,7 +52,6 @@ export default function ChipDropdown({
 				</span>
 			</button>
 
-			{/* Dropdown Menu */}
 			{isOpen && (
 				<div className="absolute right-0 mt-2 w-48 bg-white border border-slate-200 rounded-lg shadow-lg py-1 z-50">
 					<button

@@ -21,17 +21,14 @@ export default function BackgroundUser(): React.JSX.Element {
 		const ctx = canvas.getContext("2d");
 		if (!ctx) return;
 
-		// Set dimensions cleanly
 		canvas.width = window.innerWidth;
 		canvas.height = window.innerHeight;
 
-		// TRACK TRACKERS
 		let W = canvas.width;
 		let H = canvas.height;
 
 		let animationFrameId: number;
 
-		// Clean resize handler without compound expressions
 		const handleResize = () => {
 			if (!canvas) return;
 			canvas.width = window.innerWidth;

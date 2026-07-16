@@ -108,9 +108,9 @@ export default function BlogAdmin({
 					<button
 						type="button"
 						onClick={handleCancel}
-						className="flex items-center gap-1.5 text-xs mb-7 text-gray-500 hover:text-green-600 transition-colors font-mono mb-4 w-fit cursor-pointer shrink-0"
+						className="flex items-center gap-1.5 text-xs mb-7 text-gray-500 hover:text-green-600 transition-colors font-mono w-fit cursor-pointer shrink-0"
 					>
-						<ArrowLeft size={14} /> Back to Articles
+						<ArrowLeft size={14} /> Back
 					</button>
 				)}
 				{view === "list" && (
