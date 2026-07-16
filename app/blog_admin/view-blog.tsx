@@ -54,9 +54,11 @@ export default function ViewBlog({ data }: ViewBlogProps) {
 				</p>
 			)}
 
-			<div className="mt-8 text-sm prose font-mono prose-green max-w-none text-gray-700 whitespace-pre-wrap break-words leading-relaxed">
-				{data.body}
-			</div>
+			<div
+				className="mt-8 text-sm prose font-mono prose-green max-w-none text-gray-700 wrap-break-words leading-relaxed"
+				// biome-ignore lint/security/noDangerouslySetInnerHtml: content authored by trusted admin only
+				dangerouslySetInnerHTML={{ __html: data.body }}
+			/>
 		</div>
 	);
 }

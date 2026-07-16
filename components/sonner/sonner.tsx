@@ -10,7 +10,6 @@ import {
 import { Toaster as Sonner, type ToasterProps } from "sonner";
 
 const Toaster = ({ ...props }: ToasterProps) => {
-	// Explicitly set theme to "light"
 	const theme = "light";
 
 	return (
@@ -26,8 +25,6 @@ const Toaster = ({ ...props }: ToasterProps) => {
 			}}
 			style={
 				{
-					// You can keep these as CSS variables if your light theme
-					// is defined globally, or replace them with explicit colors
 					"--normal-bg": "#ffffff",
 					"--normal-text": "#171717",
 					"--normal-border": "#e5e7eb",
@@ -36,7 +33,6 @@ const Toaster = ({ ...props }: ToasterProps) => {
 			}
 			toastOptions={{
 				classNames: {
-					// Forced light mode styling using utility classes
 					toast:
 						"group toast bg-white text-gray-900 border-gray-200 shadow-lg font-mono",
 					description: "text-gray-500",

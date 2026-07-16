@@ -69,7 +69,7 @@ export default function ViewModal({
 
 					<div className="flex items-start gap-4">
 						<span className="font-medium w-28 shrink-0">Comment:</span>
-						<p className="flex-1 break-words whitespace-pre-wrap min-w-0">
+						<p className="flex-1 wrap-break-words whitespace-pre-wrap min-w-0">
 							{data.body}
 						</p>
 					</div>

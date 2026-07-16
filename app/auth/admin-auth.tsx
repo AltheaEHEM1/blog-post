@@ -1,98 +1,165 @@
 "use client";
 
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Lock, Mail } from "lucide-react";
 import { useActionState, useState } from "react";
+import { z } from "zod";
 import { login } from "@/actions/auth-action";
+
+const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+const loginSchema = z.object({
+	email: z
+		.string()
+		.trim()
+		.min(1, "Email is required")
+		.regex(EMAIL_REGEX, "Enter a valid email"),
+	password: z.string().min(1, "Password is required"),
+});
+
+type TouchedFields = { email: boolean; password: boolean };
+
+function validateField(field: keyof typeof loginSchema.shape, value: string) {
+	const result = loginSchema.shape[field].safeParse(value);
+	return result.success ? undefined : result.error.issues[0]?.message;
+}
 
 export default function AdminAuth() {
 	const [showPassword, setShowPassword] = useState(false);
 	const [state, formAction, isPending] = useActionState(login, null);
 
+	const [values, setValues] = useState({ email: "", password: "" });
+	const [touched, setTouched] = useState<TouchedFields>({
+		email: false,
+		password: false,
+	});
+	const clientErrors = {
+		email: touched.email ? validateField("email", values.email) : undefined,
+		password: touched.password
+			? validateField("password", values.password)
+			: undefined,
+	};
+
+	const handleChange =
+		(field: "email" | "password") =>
+		(e: React.ChangeEvent<HTMLInputElement>) => {
+			setValues((prev) => ({ ...prev, [field]: e.target.value }));
+		};
+
+	const handleBlur = (field: "email" | "password") => () => {
+		setTouched((prev) => ({ ...prev, [field]: true }));
+	};
+
+	const isFormValid = loginSchema.safeParse(values).success;
+	const emailError = clientErrors.email ?? state?.error?.email?.[0];
+	const passwordError = clientErrors.password ?? state?.error?.password?.[0];
+
 	return (
-		<div className="w-full flex justify-center">
-			<div className="w-full max-w-sm">
-				<div className="mb-6">
-					<span className="inline-block text-lg tracking-widest uppercase">
-						<span className="font-sans">&lt;</span>
-						<span className=" mx-0.5">AAA.Blog_post</span>
-						<span className="font-sans">/&gt;</span>
+		<div className="relative w-full max-w-105 mx-auto px-4 sm:px-0">
+			<div
+				className="relative bg-white/15 backdrop-blur-xl border border-white/30 shadow-2xl px-5 sm:px-8 md:px-10 pt-12 pb-10"
+				style={{
+					clipPath:
+						"polygon(12% 0%, 88% 0%, 100% 9%, 100% 91%, 88% 100%, 12% 100%, 0% 91%, 0% 9%)",
+				}}
+			>
+				<div className="flex justify-center mb-4">
+					<span className="inline-flex items-center gap-1.5 font-mono text-[10px] sm:text-xs font-semibold text-emerald-50 bg-white/10 border border-white/25 rounded-full px-3 py-1 tracking-tight backdrop-blur-sm">
+						<span className="w-1.5 h-1.5 rounded-full bg-emerald-300 shadow-[0_0_6px_rgba(110,231,183,0.9)]" />
+						&lt;AAA.blog_post/&gt;
 					</span>
 				</div>
 
-				<form action={formAction}>
-					<div className="mb-4">
-						<label
-							htmlFor="email"
-							className="block text-sm font-bold text-[#1A1A2E] mb-1"
+				<h1 className="text-center text-xl sm:text-3xl font-semibold text-white tracking-wide mb-8 drop-shadow-sm">
+					Sign In
+				</h1>
+
+				<form
+					action={formAction}
+					noValidate
+					className="flex flex-col items-center w-full gap-4"
+				>
+					{/* Email Input */}
+					<div className="w-full">
+						<div
+							className={`flex items-center gap-3 w-full bg-white/70 rounded-full px-5 py-3 ring-1 transition-all focus-within:ring-2 ${emailError ? "ring-red-400 focus-within:ring-red-500" : "ring-transparent focus-within:ring-teal-500/60"}`}
 						>
-							Email
-						</label>
-						<input
-							id="email"
-							name="email"
-							type="email"
-							placeholder="Enter email address"
-							maxLength={128}
-							className="w-full px-4 py-2.5 bg-gray-100 border border-transparent rounded-lg focus:border-[#470606] focus:outline-none transition-all text-sm placeholder:text-sm"
-						/>
-						{state?.error?.email && (
-							<p className="text-xs text-red-500 mt-1">
-								{state.error.email[0]}
+							<Mail size={16} className="text-emerald-800 shrink-0" />
+							<div className="w-px h-4 bg-emerald-900/20 shrink-0" />
+							<input
+								id="email"
+								name="email"
+								type="email"
+								placeholder="Email"
+								maxLength={128}
+								value={values.email}
+								onChange={handleChange("email")}
+								onBlur={handleBlur("email")}
+								className="w-full bg-transparent outline-none text-sm text-[#1A1A2E] placeholder:text-[#1A1A2E]/50"
+							/>
+						</div>
+						{emailError && (
+							<p className="text-[11px] text-red-100 bg-red-500/30 rounded-full px-3 py-0.5 mt-1.5">
+								{emailError}
 							</p>
 						)}
 					</div>
 
-					<div className="mb-2">
-						<label
-							htmlFor="password"
-							className="block text-sm font-bold text-[#1A1A2E] mb-1"
+					{/* Password Input */}
+					<div className="w-full">
+						<div
+							className={`flex items-center gap-3 w-full bg-white/70 rounded-full px-5 py-3 ring-1 transition-all focus-within:ring-2 ${passwordError ? "ring-red-400 focus-within:ring-red-500" : "ring-transparent focus-within:ring-teal-500/60"}`}
 						>
-							Password
-						</label>
-						<div className="relative">
+							<Lock size={16} className="text-emerald-800 shrink-0" />
+							<div className="w-px h-4 bg-emerald-900/20 shrink-0" />
 							<input
 								id="password"
 								name="password"
 								type={showPassword ? "text" : "password"}
-								placeholder="Enter password"
-								className="w-full px-4 py-2.5 bg-gray-100 border border-transparent rounded-lg focus:border-[#470606] focus:outline-none transition-all text-sm placeholder:text-sm"
+								placeholder="Password"
+								value={values.password}
+								onChange={handleChange("password")}
+								onBlur={handleBlur("password")}
+								className="w-full bg-transparent outline-none text-sm text-[#1A1A2E] placeholder:text-[#1A1A2E]/50"
 							/>
 							<button
 								type="button"
-								className="absolute right-3 top-2.5 text-gray-400"
+								className="text-teal-700 hover:text-teal-900"
 								onClick={() => setShowPassword(!showPassword)}
-								aria-label={showPassword ? "Hide password" : "Show password"}
 							>
-								{showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+								{showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
 							</button>
 						</div>
-						{state?.error?.password && (
-							<p className="text-xs text-red-500 mt-1">
-								{state.error.password[0]}
+						{passwordError && (
+							<p className="text-[11px] text-red-100 bg-red-500/30 rounded-full px-3 py-0.5 mt-1.5">
+								{passwordError}
 							</p>
 						)}
 					</div>
 
 					<button
 						type="submit"
-						disabled={isPending}
-						className="w-full bg-[#1A1A2E] text-white font-bold py-3 px-4 rounded-lg hover:bg-[#2A2A4E] transition-colors mb-6 mt-4 disabled:opacity-60"
+						disabled={isPending || !isFormValid}
+						className="w-full sm:w-[85%] bg-teal-800 text-white text-sm font-bold tracking-wide py-3 rounded-full hover:bg-teal-900 transition-colors mt-2 disabled:opacity-60 active:scale-[0.98]"
+						style={{
+							clipPath:
+								"polygon(6% 0%, 94% 0%, 100% 50%, 94% 100%, 6% 100%, 0% 50%)",
+						}}
 					>
-						{isPending ? "Signing in..." : "Login"}
+						{isPending ? "Signing in..." : "LOGIN"}
 					</button>
-				</form>
 
-				<p className="text-xs text-gray-500 mt-4 leading-relaxed">
-					By using this service, you understand and agree to the{" "}
-					<button type="button" className="underline hover:text-black">
-						Terms of Use
-					</button>{" "}
-					and{" "}
-					<button type="button" className="underline hover:text-black">
-						Privacy Statement
-					</button>
-					.
-				</p>
+					<p className="text-[10px] text-white/70 mt-4 text-center px-4">
+						By using this service, you understand and agree to the{" "}
+						<button type="button" className="underline hover:text-white">
+							Terms of Use
+						</button>{" "}
+						and{" "}
+						<button type="button" className="underline hover:text-white">
+							Privacy Statement
+						</button>
+						.
+					</p>
+				</form>
 			</div>
 		</div>
 	);

@@ -16,7 +16,6 @@ export default function LayoutWrapper({
 
 	const isAdminPath = adminPaths.some((path) => pathname?.startsWith(path));
 
-	// Auth route has no layout wrapper so it can be standalone or just use fragment
 	if (pathname?.startsWith("/auth")) {
 		return <>{children}</>;
 	}
