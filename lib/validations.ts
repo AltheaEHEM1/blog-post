@@ -2,7 +2,7 @@ import { z } from "zod";
 
 /*  Shared helpers */
 
-export const noConsecutiveSpaces = (message: string) => (val: string) =>
+export const noConsecutiveSpaces = (_message: string) => (val: string) =>
 	!/ {2,}/.test(val);
 
 // Collapses 2+ consecutive spaces into one, and hard-caps length.

@@ -1,5 +1,6 @@
 "use client";
 
+import { AnimatePresence, motion } from "framer-motion";
 import { AlertCircle, MessageCircle } from "lucide-react";
 import {
 	type ChangeEvent,
@@ -31,15 +32,23 @@ interface FieldErrors {
 
 function FieldError({ message }: { message: string }) {
 	return (
-		<div className="flex items-start gap-1.5 mt-1.5 px-2 py-1.5 rounded-md bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900">
-			<AlertCircle
-				size={12}
-				className="text-red-500 dark:text-red-400 shrink-0 mt-px"
-			/>
-			<p className="text-[11px] text-red-600 dark:text-red-400 wrap-break-word leading-snug">
-				{message}
-			</p>
-		</div>
+		<motion.div
+			initial={{ height: 0, opacity: 0 }}
+			animate={{ height: "auto", opacity: 1 }}
+			exit={{ height: 0, opacity: 0 }}
+			transition={{ duration: 0.2 }}
+			className="overflow-hidden"
+		>
+			<div className="flex items-start gap-1.5 mt-1.5 px-2 py-1.5 rounded-md bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900">
+				<AlertCircle
+					size={12}
+					className="text-red-500 dark:text-red-400 shrink-0 mt-px"
+				/>
+				<p className="text-[11px] text-red-600 dark:text-red-400 wrap-break-word leading-snug">
+					{message}
+				</p>
+			</div>
+		</motion.div>
 	);
 }
 
@@ -126,13 +135,21 @@ export default function CommentSection({
 								placeholder="Your name"
 								className="w-full rounded-md border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 px-2.5 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-cyan-500"
 							/>
-							{fieldErrors.authorName ? (
-								<FieldError message={fieldErrors.authorName} />
-							) : (
-								state?.error?.authorName && (
-									<FieldError message={state.error.authorName[0]} />
-								)
-							)}
+							<AnimatePresence>
+								{fieldErrors.authorName ? (
+									<FieldError
+										key="field-authorName"
+										message={fieldErrors.authorName}
+									/>
+								) : (
+									state?.error?.authorName && (
+										<FieldError
+											key="state-authorName"
+											message={state.error.authorName[0]}
+										/>
+									)
+								)}
+							</AnimatePresence>
 						</div>
 
 						<div>
@@ -151,13 +168,18 @@ export default function CommentSection({
 								placeholder="Write a comment..."
 								className="w-full rounded-md border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 px-2.5 py-1.5 text-xs resize-y focus:outline-none focus:ring-1 focus:ring-cyan-500"
 							/>
-							{fieldErrors.body ? (
-								<FieldError message={fieldErrors.body} />
-							) : (
-								state?.error?.body && (
-									<FieldError message={state.error.body[0]} />
-								)
-							)}
+							<AnimatePresence>
+								{fieldErrors.body ? (
+									<FieldError key="field-body" message={fieldErrors.body} />
+								) : (
+									state?.error?.body && (
+										<FieldError
+											key="state-body"
+											message={state.error.body[0]}
+										/>
+									)
+								)}
+							</AnimatePresence>
 						</div>
 
 						<button
@@ -179,10 +201,35 @@ export default function CommentSection({
 							</p>
 						</div>
 					) : (
-						<div className="space-y-3">
+						<motion.div
+							initial="hidden"
+							animate="show"
+							variants={{
+								hidden: {},
+								show: {
+									transition: {
+										staggerChildren: 0.05,
+									},
+								},
+							}}
+							className="space-y-3"
+						>
 							{initialComments.map((comment) => (
-								<div
+								<motion.div
 									key={comment.id}
+									variants={
+										{
+											hidden: { opacity: 0, y: 12 },
+											show: {
+												opacity: 1,
+												y: 0,
+												transition: {
+													duration: 0.4,
+													ease: "easeOut",
+												},
+											},
+										} as const
+									}
 									className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-3.5 min-w-0"
 								>
 									<div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 mb-1.5">
@@ -200,9 +247,9 @@ export default function CommentSection({
 									<p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed rap-break-word overflow-wrap:anywhere">
 										{comment.body}
 									</p>
-								</div>
+								</motion.div>
 							))}
-						</div>
+						</motion.div>
 					)}
 				</div>
 			</div>

@@ -34,7 +34,7 @@ export default function BlogSearchBar({
 	}, [query, category, initialQuery, router]);
 
 	return (
-		<div className="relative w-full sm:w-48 md:w-56 group">
+		<div className="relative w-full sm:w-48 md:w-56 sm:focus-within:w-64 md:focus-within:w-72 transition-all duration-300 ease-in-out group">
 			<Search
 				className="absolute left-2 top-1/2 -translate-y-1/2 text-cyan-500/70 group-focus-within:text-white transition-colors z-10"
 				size={14}

@@ -1,25 +1,25 @@
 "use client";
 
-import Underline from "@tiptap/extension-underline";
-import TextAlign from "@tiptap/extension-text-align";
 import Placeholder from "@tiptap/extension-placeholder";
-import { EditorContent, useEditor, type Editor } from "@tiptap/react";
+import TextAlign from "@tiptap/extension-text-align";
+import Underline from "@tiptap/extension-underline";
+import { type Editor, EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import {
-	Bold,
-	Italic,
-	Underline as UnderlineIcon,
-	List,
-	ListOrdered,
-	AlignLeft,
 	AlignCenter,
-	AlignRight,
 	AlignJustify,
+	AlignLeft,
+	AlignRight,
+	Bold,
 	Heading1,
 	Heading2,
 	Heading3,
-	Undo,
+	Italic,
+	List,
+	ListOrdered,
 	Redo,
+	Underline as UnderlineIcon,
+	Undo,
 } from "lucide-react";
 
 interface RichTextEditorProps {

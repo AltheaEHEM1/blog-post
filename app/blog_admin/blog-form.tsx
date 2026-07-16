@@ -122,7 +122,7 @@ export default function BlogForm({
 				return;
 			}
 
-			setImageUrl(result.url);
+			setImageUrl(result.url ?? "");
 			toast.success("Image uploaded successfully");
 		} catch {
 			toast.error("Image upload failed — please try again");
@@ -259,9 +259,9 @@ export default function BlogForm({
 
 					{/* Cover Image */}
 					<div className="flex flex-col gap-1.5">
-						<label className="text-xs font-semibold font-mono text-gray-700">
+						<span className="text-xs font-semibold font-mono text-gray-700">
 							Cover Image
-						</label>
+						</span>
 
 						{imageUrl ? (
 							<div className="relative border border-gray-200 rounded-lg overflow-hidden bg-gray-50">
@@ -327,9 +327,9 @@ export default function BlogForm({
 
 				{/* ── Section 3: Content Body (Rich Text Editor) ── */}
 				<div className="flex flex-col gap-1.5">
-					<label className="text-xs font-semibold font-mono text-gray-600">
+					<span className="text-xs font-semibold font-mono text-gray-600">
 						Body <span className="text-red-500">*</span>
-					</label>
+					</span>
 					<input type="hidden" name="body" value={body} />
 					<RichTextEditor content={body} onChange={handleBodyChange} />
 					{fieldErrors.body && (
