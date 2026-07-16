@@ -96,8 +96,6 @@ export default function BlogForm({
 		}));
 	};
 
-	// RichTextEditor is contentEditable, so keystrokes can't be intercepted to
-	// block double spaces there — length/space rules are still validated live.
 	const handleBodyChange = (html: string) => {
 		setBody(html);
 		const result = blogSchema.shape.body.safeParse(html);
@@ -286,11 +284,10 @@ export default function BlogForm({
 						) : (
 							<label
 								htmlFor="cover-image"
-								className={`relative border border-dashed border-gray-400 rounded-lg hover:border-green-400 hover:bg-green-50/10 transition-colors h-[150px] flex flex-col items-center justify-center gap-2 ${
-									uploading
+								className={`relative border border-dashed border-gray-400 rounded-lg hover:border-green-400 hover:bg-green-50/10 transition-colors h-[150px] flex flex-col items-center justify-center gap-2 ${uploading
 										? "pointer-events-none opacity-60 cursor-not-allowed"
 										: "cursor-pointer"
-								}`}
+									}`}
 							>
 								{uploading ? (
 									<>
