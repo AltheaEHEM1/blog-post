@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import { createBlog, updateBlog } from "@/actions/blog-action";
 import { uploadImage } from "@/actions/upload-action";
 import { Button } from "@/components/button/button";
+import RichTextEditor from "@/components/rich-text-editor/rich-text-editor";
 import type { BlogPost, Category } from "./blog-admin";
 
 interface BlogFormProps {
@@ -31,9 +32,9 @@ export default function BlogForm({
 	const action = initialData ? updateBlog : createBlog;
 	const [state, formAction, isPending] = useActionState(action, null);
 
-	// Holds the committed Blob URL (or pre-existing one on edit)
 	const [imageUrl, setImageUrl] = useState<string>(initialData?.imageUrl ?? "");
 	const [uploading, setUploading] = useState(false);
+	const [body, setBody] = useState<string>(initialData?.body ?? "");
 	const fileInputRef = useRef<HTMLInputElement>(null);
 
 	useEffect(() => {
@@ -87,8 +88,8 @@ export default function BlogForm({
 				{initialData && (
 					<input type="hidden" name="id" value={initialData.id} />
 				)}
-				{/* Pass the committed Blob URL to the Server Action */}
 				<input type="hidden" name="imageUrl" value={imageUrl} />
+				<input type="hidden" name="body" value={body} />
 
 				{/* ── Section 1: Basic Info ───────────────────── */}
 				<div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -185,7 +186,7 @@ export default function BlogForm({
 						</div>
 					</div>
 
-					{/* Cover Image — now uploads to Vercel Blob */}
+					{/* Cover Image */}
 					<div className="flex flex-col gap-1.5">
 						<label className="text-xs font-semibold font-mono text-gray-700">
 							Cover Image
@@ -253,22 +254,12 @@ export default function BlogForm({
 					</div>
 				</div>
 
-				{/* ── Section 3: Content Body ──────────────────── */}
+				{/* ── Section 3: Content Body (Rich Text Editor) ── */}
 				<div className="flex flex-col gap-1.5">
-					<label
-						className="text-xs font-semibold font-mono text-gray-600"
-						htmlFor="body-input"
-					>
+					<label className="text-xs font-semibold font-mono text-gray-600">
 						Body <span className="text-red-500">*</span>
 					</label>
-					<textarea
-						id="body-input"
-						name="body"
-						rows={12}
-						defaultValue={initialData?.body ?? ""}
-						className="w-full rounded-md border border-gray-400 px-3 py-2 text-xs font-mono focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500 leading-relaxed"
-						placeholder="Compose your article..."
-					/>
+					<RichTextEditor content={body} onChange={setBody} />
 					{state?.error?.body && (
 						<p className="text-xs text-red-500 font-mono">
 							{state.error.body[0]}

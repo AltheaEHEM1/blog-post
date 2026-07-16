@@ -59,7 +59,7 @@ export default function AdminAuth() {
 	const passwordError = clientErrors.password ?? state?.error?.password?.[0];
 
 	return (
-		<div className="relative w-full max-w-[420px] mx-auto px-4 sm:px-0">
+		<div className="relative w-full max-w-105 mx-auto px-4 sm:px-0">
 			<div
 				className="relative bg-white/15 backdrop-blur-xl border border-white/30 shadow-2xl px-5 sm:px-8 md:px-10 pt-12 pb-10"
 				style={{
