@@ -17,6 +17,8 @@ import RichTextEditor from "@/components/rich-text-editor/rich-text-editor";
 import { blogSchema, sanitizeInput } from "@/lib/validations";
 import type { BlogPost, Category } from "./blog-admin";
 
+//import Forbidden from "@/app/forbidden";
+
 interface BlogFormProps {
 	initialData?: BlogPost;
 	categories: Category[];
@@ -51,6 +53,9 @@ export default function BlogForm({
 	const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
 
 	const fileInputRef = useRef<HTMLInputElement>(null);
+
+	// Temporarily returning the Forbidden component so you can preview it directly
+	//return <Forbidden />;
 
 	useEffect(() => {
 		if (state?.success) {
@@ -285,8 +290,8 @@ export default function BlogForm({
 							<label
 								htmlFor="cover-image"
 								className={`relative border border-dashed border-gray-400 rounded-lg hover:border-green-400 hover:bg-green-50/10 transition-colors h-[150px] flex flex-col items-center justify-center gap-2 ${uploading
-										? "pointer-events-none opacity-60 cursor-not-allowed"
-										: "cursor-pointer"
+									? "pointer-events-none opacity-60 cursor-not-allowed"
+									: "cursor-pointer"
 									}`}
 							>
 								{uploading ? (
