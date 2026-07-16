@@ -70,7 +70,7 @@ export default function AdminAuth() {
 				<div className="flex justify-center mb-4">
 					<span className="inline-flex items-center gap-1.5 font-mono text-[10px] sm:text-xs font-semibold text-emerald-50 bg-white/10 border border-white/25 rounded-full px-3 py-1 tracking-tight backdrop-blur-sm">
 						<span className="w-1.5 h-1.5 rounded-full bg-emerald-300 shadow-[0_0_6px_rgba(110,231,183,0.9)]" />
-						&lt;Stratpoint.blog_admin/&gt;
+						&lt;AAA.blog_post/&gt;
 					</span>
 				</div>
 
@@ -152,20 +152,20 @@ export default function AdminAuth() {
 					>
 						{isPending ? "Signing in..." : "LOGIN"}
 					</button>
+
+					<p className="text-[10px] text-white/70 mt-4 text-center px-4">
+						By using this service, you understand and agree to the{" "}
+						<button type="button" className="underline hover:text-white">
+							Terms of Use
+						</button>{" "}
+						and{" "}
+						<button type="button" className="underline hover:text-white">
+							Privacy Statement
+						</button>
+						.
+					</p>
 				</form>
 			</div>
-
-			<p className="text-[10px] text-white/70 mt-5 text-center px-4">
-				By using this service, you understand and agree to the{" "}
-				<button type="button" className="underline hover:text-white">
-					Terms of Use
-				</button>{" "}
-				and{" "}
-				<button type="button" className="underline hover:text-white">
-					Privacy Statement
-				</button>
-				.
-			</p>
 		</div>
 	);
 }

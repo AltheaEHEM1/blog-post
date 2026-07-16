@@ -33,7 +33,7 @@ export default function BlogCategoryFilter({
 		}`;
 
 	return (
-		<div className="md:sticky md:top-24 md:self-start w-full">
+		<div className="md:sticky md:top-14 md:self-start w-full">
 			<h2 className="font-mono text-[10px] sm:text-xs uppercase tracking-widest text-slate-400 mb-2 sm:mb-4">
 				Categories
 			</h2>
