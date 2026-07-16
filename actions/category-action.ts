@@ -33,6 +33,8 @@ export async function createCategory(_: unknown, formData: FormData) {
 	}
 
 	revalidatePath("/category");
+	revalidatePath("/blog_admin");
+	revalidatePath("/blog");
 	return { success: true };
 }
 
@@ -61,6 +63,8 @@ export async function updateCategory(_: unknown, formData: FormData) {
 	}
 
 	revalidatePath("/category");
+	revalidatePath("/blog_admin");
+	revalidatePath("/blog");
 	return { success: true };
 }
 
@@ -70,6 +74,8 @@ export async function deleteCategory(id: string) {
 		.set({ deletedAt: new Date() })
 		.where(eq(categories.id, id));
 	revalidatePath("/category");
+	revalidatePath("/blog_admin");
+	revalidatePath("/blog");
 }
 export async function getActiveCategories() {
 	return db
