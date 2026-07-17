@@ -1,4 +1,4 @@
-# [Althea.dev] — Blog Post System
+# <AAA.blog_post/> — Blog Post System
 
 A full-stack blog platform with a public-facing blog and a password-protected admin panel for managing posts, categories, and comment moderation. Built as Mini-Project 2 of the bootcamp full-stack track.
 
