@@ -1,64 +1,84 @@
-Blog Post System
-A high-performance, minimalist blog post system built to showcase articles and technical insights.
+< AAA.blog_post/>  — Blog Post System
+A full-stack blog platform with a public-facing blog and a password-protected admin panel for managing posts, categories, and comment moderation. 
+
+✨ Overview
+The system is split into two sides:
+Public side — visitors browse published blog posts, view full articles, and leave comments.
+Admin side — a sidebar-driven dashboard to manage Blogs, Categories, and Comments, with full CRUD and moderation controls.
 
 🚀 Tech Stack
-Framework: Next.js (App Router, Turbopack)
+Framework - Next.js 16 (App Router, Turbopack)
+Database - Neon Postgres
+ORM - Drizzle ORM v2 (drizzle-orm/neon-http)
+Validation - Zod
+Styling - Tailwind CSS v4
+Language - TypeScript
+Linting/Formatting - Biome
 
-Database: Neon Postgres
+🧩 Features
+Public (User) Side
+* Blog list page — fetches and displays all published posts
+* Individual post page — image, title, subtitle, author, category, and body
+* Comment section per post
+   - Visitors can submit comments
+   - Comments are not shown immediately — pending admin approval
+* Skeleton loading states for blog list and post pages
 
-ORM: Drizzle ORM
 
-Styling: Tailwind CSS
-
-Language: TypeScript
-
-Tooling: Biome (Linting/Formatting)
+Admin Side
+Accessed via a sidebar with three sections:
+  Blog
+  * Add, edit, delete, and view posts
+  * Fields: image, title, subtitle, author, category (dropdown), body
+  Category
+  * Add, edit, delete, and view categories
+  * Fields: category name, description
+  Comment
+  * View all submitted comments
+  * Approve or reject comments before they appear on the public post
 
 🛠 Getting Started
-Follow these steps to set up the project locally on your machine.
+Prerequisites
+Node.js v20+
+pnpm 
+A Neon Postgres account (or local Postgres instance)
 
-1. Clone the Repository
-Bash
-git clone https://github.com/AltheaEHEM1/blog_post.git
+1. Clone the repository
+bashgit clone https://github.com/AltheaEHEM1/blog_post.git
 cd blog_post
-2. Install Dependencies
-This project utilizes sharp for high-performance image optimization. Authorize the build script and install dependencies natively using pnpm:
 
-Bash
-pnpm config set only-built-dependencies sharp
+2. Install dependencies
+This project uses sharp for image optimization, so native build scripts need to be approved:
+bashpnpm config set only-built-dependencies sharp
 pnpm install
-3. Database Configuration
-This project uses Neon Postgres for data storage and Drizzle ORM for schema management.
 
-Create a .env.local file in the root directory.
+3. Configure environment variables
+Create a .env.local file in the project root:
+envDATABASE_URL=postgres://your-username:your-password@your-neon-host/neondb
+ADMIN_PASSWORD=your-admin-password
+SESSION_SECRET=your-random-session-secret
 
-Add your Neon database connection string:
+4. Run database migrations
+bashpnpm drizzle-kit generate
+pnpm drizzle-kit migrate
 
-Code snippet
-DATABASE_URL=postgres://your-username:your-password@your-neon-host/neondb
-Sync your schema with the database:
+5. Seed sample data (optional but recommended)
+bashpnpm db:seed
+Seeds at least 3 sample blog posts with categories so the public blog isn't empty on first load.
 
-Generate migrations: pnpm drizzle-kit generate
+6. Start the dev server
+bashpnpm dev
+Visit http://localhost:3000 to view the public blog, and http://localhost:3000/auth for the admin panel.
 
-Apply migrations: pnpm drizzle-kit migrate
+📜 Scripts
+pnpm dev - Start the dev server
+pnpm build - Production build 
+pnpm start - Run the production build
+pnpm check - Run Biome lint/format check 
+pnpm drizzle-kit generate - Generate SQL migration files 
+pnpm drizzle-kit migrate - Apply migrations to the database
+pnpm db:seed - Seed sample posts and categories 
+pnpm db:studio - Open Drizzle Studio to inspect data
 
-💻 Running the Development Server
-Start the development server:
 
-Bash
-pnpm dev
-Open http://localhost:3000 with your browser to see the result. You can start editing the page by modifying app/page.tsx. The page auto-updates as you edit the file.
 
-📖 Learn More
-To learn more about the technologies used in this project, take a look at the following resources:
-
-Next.js Documentation - Learn about Next.js features and API.
-
-Learn Next.js - An interactive Next.js tutorial.
-
-Drizzle ORM Docs - Database management and migrations.
-
-🌐 Deploy on Vercel
-The easiest way to deploy your Next.js app is to use the Vercel Platform from the creators of Next.js.  
-
-Check out the Next.js deployment documentation for more details.
